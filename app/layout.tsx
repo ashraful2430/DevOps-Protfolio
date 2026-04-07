@@ -15,7 +15,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Ashraful Islam Ashik | DevOps Engineer",
-  description: "Modern DevOps portfolio built with Next.js and TypeScript",
+  description: "DevOps Engineer portfolio built with Next.js and TypeScript.",
+  openGraph: {
+    title: "Ashraful Islam Ashik | DevOps Engineer",
+    description: "DevOps Engineer portfolio built with Next.js and TypeScript.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({
@@ -29,12 +34,8 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="min-h-screen antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-        >
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           {children}
         </ThemeProvider>
       </body>
