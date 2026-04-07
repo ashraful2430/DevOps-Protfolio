@@ -15,7 +15,7 @@ export default function Navbar() {
     setMounted(true);
 
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 10);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -32,9 +32,13 @@ export default function Navbar() {
     const element = document.getElementById(targetId);
 
     if (element) {
-      element.scrollIntoView({
+      const yOffset = -90;
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
         behavior: "smooth",
-        block: "start",
       });
     }
 
@@ -43,19 +47,25 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`fixed left-0 top-0 z-[100] w-full transition-all duration-300 ${
         scrolled
-          ? "border-b border-border bg-background/80 backdrop-blur-xl"
-          : "bg-transparent"
+          ? "border-b border-border bg-background/85 backdrop-blur-xl"
+          : "bg-background/60 backdrop-blur-md"
       }`}
     >
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <a
           href="#home"
           onClick={(e) => handleNavClick(e, "#home")}
-          className="max-w-[180px] truncate text-sm font-bold tracking-wide text-foreground sm:max-w-none sm:text-base lg:text-lg"
+          className="flex items-center gap-3"
         >
-          {personalInfo.name}
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent font-bold text-white shadow-lg shadow-accent/20">
+            A
+          </span>
+
+          <span className="max-w-[180px] truncate text-sm font-bold tracking-wide text-foreground sm:max-w-none sm:text-base lg:text-lg">
+            {personalInfo.name}
+          </span>
         </a>
 
         <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
@@ -64,7 +74,7 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className="text-sm text-muted-foreground transition hover:text-accent"
+              className="text-sm font-medium text-muted-foreground transition hover:text-accent"
             >
               {link.name}
             </a>
@@ -102,7 +112,7 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm text-muted-foreground transition hover:text-accent"
+                className="text-sm font-medium text-muted-foreground transition hover:text-accent"
               >
                 {link.name}
               </a>
