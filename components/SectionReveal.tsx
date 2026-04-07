@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { TypeAnimation } from "react-type-animation";
 import {
   ArrowRight,
   BriefcaseBusiness,
@@ -93,23 +92,6 @@ export default function Hero() {
               {personalInfo.name}
             </span>
           </h1>
-
-          <div className="mt-4 h-10 sm:h-12">
-            <TypeAnimation
-              sequence={[
-                "DevOps Engineer",
-                1500,
-                "Cloud Architect",
-                1500,
-                "CI/CD Specialist",
-                1500,
-              ]}
-              wrapper="span"
-              speed={50}
-              repeat={Infinity}
-              className="text-lg font-semibold text-accent sm:text-xl lg:text-2xl"
-            />
-          </div>
 
           <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
             {personalInfo.shortBio}
