@@ -3,7 +3,7 @@ import { BriefcaseBusiness, CalendarDays } from "lucide-react";
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-20 px-6 md:px-10 lg:px-20">
+    <section id="experience" className="py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-accent">

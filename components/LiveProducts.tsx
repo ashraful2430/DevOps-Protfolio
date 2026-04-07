@@ -3,7 +3,7 @@ import { ExternalLink, Briefcase, CheckCircle2 } from "lucide-react";
 
 export default function LiveProducts() {
   return (
-    <section id="live-products" className="py-20 px-6 md:px-10 lg:px-20">
+    <section id="live-products" className="py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl">
         <div className="mb-12 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-accent">
