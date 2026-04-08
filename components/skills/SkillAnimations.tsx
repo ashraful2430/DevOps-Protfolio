@@ -2578,7 +2578,7 @@ export function GithubAnimation() {
         <TerminalBox
           lines={logs}
           title="github@repo — collaboration log"
-          heightClass="h-[140px] sm:h-[170px] lg:h-[190px]"
+          heightClass="h-[300px] sm:h-[300px] lg:h-[500px]"
         />
       </div>
     </PanelShell>
