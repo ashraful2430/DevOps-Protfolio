@@ -192,9 +192,11 @@ function StatusBadge({
 function TerminalBox({
   lines,
   title = "ashik@devops-machine",
+  heightClass = "h-[350px]",
 }: {
   lines: string[];
   title?: string;
+  heightClass?: string;
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border/70 bg-background/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
@@ -205,7 +207,9 @@ function TerminalBox({
         <span className="ml-3 text-[11px] text-muted-foreground">{title}</span>
       </div>
 
-      <div className="h-[220px] overflow-y-auto px-4 py-4 font-mono text-xs leading-6 sm:text-sm">
+      <div
+        className={`${heightClass} overflow-y-auto px-4 py-4 font-mono text-xs leading-6 sm:text-sm`}
+      >
         {lines.map((line, index) => (
           <motion.p
             key={`${line}-${index}`}
@@ -225,6 +229,7 @@ function TerminalBox({
             {line || "\u00A0"}
           </motion.p>
         ))}
+
         <motion.span
           animate={{ opacity: [1, 0] }}
           transition={{
@@ -628,76 +633,162 @@ export function CICDAnimation() {
 }
 
 export function DockerAnimation() {
-  const layers = [
-    { label: "Base Image", value: "node:20-alpine" },
-    { label: "Dependencies", value: "npm install" },
-    { label: "Source Code", value: "COPY . ." },
-    { label: "Build", value: "npm run build" },
-    { label: "Runtime", value: "CMD npm start" },
+  const stages = [
+    {
+      title: "Base Image",
+      detail: "node:20-alpine",
+      command: "FROM node:20-alpine AS base",
+    },
+    {
+      title: "Dependencies",
+      detail: "Install only needed packages",
+      command: "RUN npm ci",
+    },
+    {
+      title: "Build Stage",
+      detail: "Compile production assets",
+      command: "RUN npm run build",
+    },
+    {
+      title: "Runtime Image",
+      detail: "Copy only required output",
+      command: "COPY --from=builder /app/dist ./dist",
+    },
+    {
+      title: "Secure Start",
+      detail: "Run app with lean final image",
+      command: 'CMD ["node","dist/server.js"]',
+    },
   ];
-  const [active, setActive] = useState(0);
 
-  useEffect(() => {
-    const t = setInterval(
-      () => setActive((p) => (p + 1) % layers.length),
-      1200,
-    );
-    return () => clearInterval(t);
-  }, [layers.length]);
+  const [started, setStarted] = useState(false);
+  const [activeStage, setActiveStage] = useState(-1);
+  const [built, setBuilt] = useState(false);
+  const [logLines, setLogLines] = useState<string[]>([
+    "# Multi-stage production Docker build ready",
+    "# Click the button below to simulate the build",
+  ]);
+
+  async function runDockerBuild() {
+    if (started) return;
+
+    setStarted(true);
+    setBuilt(false);
+    setActiveStage(-1);
+    setLogLines([
+      "$ docker build -t portfolio-app:prod .",
+      "Loading build context...",
+      "Using .dockerignore for cleaner context...",
+    ]);
+
+    for (let i = 0; i < stages.length; i++) {
+      setActiveStage(i);
+
+      await sleep(700);
+
+      setLogLines((prev) => [
+        ...prev,
+        "",
+        `# Stage ${i + 1}: ${stages[i].title}`,
+        `$ ${stages[i].command}`,
+        `✓ ${stages[i].detail}`,
+      ]);
+    }
+
+    await sleep(500);
+
+    setLogLines((prev) => [
+      ...prev,
+      "",
+      "✓ Multi-stage image built successfully",
+      "✓ Final image size optimized",
+      "✓ Production container ready to run",
+      "$ docker run -d -p 3000:3000 portfolio-app:prod",
+    ]);
+
+    setBuilt(true);
+    setStarted(false);
+  }
+
+  function resetDockerBuild() {
+    setStarted(false);
+    setBuilt(false);
+    setActiveStage(-1);
+    setLogLines([
+      "# Multi-stage production Docker build ready",
+      "# Click the button below to simulate the build",
+    ]);
+  }
 
   return (
     <PanelShell
-      title="Docker — image build flow"
-      subtitle="Source → Dockerfile → Layers → Image → Container"
-      action={<StatusBadge label="Building" tone="warning" />}
+      title="Docker — production-grade build flow"
+      subtitle="Multi-stage build → optimized image → secure runtime container"
+      action={
+        <StatusBadge
+          label={started ? "Building" : built ? "Built" : "Ready"}
+          tone={started ? "warning" : built ? "success" : "default"}
+        />
+      }
     >
-      <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-2xl border border-border/70 bg-card/55 p-4">
-          <p className="mb-3 text-sm font-semibold text-foreground">
-            Dockerfile
-          </p>
-          <TerminalBox
-            title="Dockerfile"
-            lines={[
-              "FROM node:20-alpine",
-              "WORKDIR /app",
-              "COPY package*.json ./",
-              "RUN npm install",
-              "COPY . .",
-              "RUN npm run build",
-              'CMD ["npm","start"]',
-            ]}
-          />
-        </div>
-
+      <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="space-y-4">
           <div className="rounded-2xl border border-border/70 bg-card/55 p-4">
-            <p className="mb-4 text-sm font-semibold text-foreground">
-              Image Layers
-            </p>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">
+                Production Docker Stages
+              </p>
+              <span className="text-xs text-muted-foreground">
+                Multi-stage optimized flow
+              </span>
+            </div>
+
             <div className="space-y-3">
-              {layers.map((layer, i) => {
-                const isActive = i <= active;
+              {stages.map((stage, i) => {
+                const isDone = built ? true : i < activeStage;
+                const isActive = i === activeStage && started;
+
                 return (
                   <motion.div
-                    key={layer.label}
+                    key={stage.title}
                     animate={{
+                      opacity: isDone || isActive ? 1 : 0.55,
                       scale: isActive ? 1.02 : 1,
-                      opacity: isActive ? 1 : 0.55,
                     }}
+                    transition={{ duration: 0.25 }}
                     className={`rounded-xl border px-4 py-3 ${
                       isActive
-                        ? "border-accent/30 bg-accent/10"
-                        : "border-border/70 bg-background/60"
+                        ? "border-yellow-500/30 bg-yellow-500/10"
+                        : isDone
+                          ? "border-accent/30 bg-accent/10"
+                          : "border-border/70 bg-background/60"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm font-medium text-foreground">
-                        {layer.label}
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {stage.title}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {stage.detail}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${
+                          isActive
+                            ? "bg-yellow-500/15 text-yellow-300"
+                            : isDone
+                              ? "bg-accent/15 text-accent"
+                              : "bg-card text-muted-foreground"
+                        }`}
+                      >
+                        {isActive ? "Running" : isDone ? "Done" : "Pending"}
                       </span>
-                      <span className="text-xs text-muted-foreground">
-                        {layer.value}
-                      </span>
+                    </div>
+
+                    <div className="mt-3">
+                      <TinyProgress value={isDone ? 100 : isActive ? 65 : 8} />
                     </div>
                   </motion.div>
                 );
@@ -707,16 +798,74 @@ export function DockerAnimation() {
 
           <div className="grid grid-cols-2 gap-4">
             <MiniCard
-              title="Image Size"
-              value="247 MB"
+              title="Final Image"
+              value={built ? "118 MB" : "Pending"}
               icon={<Layers3 className="h-4 w-4" />}
             />
             <MiniCard
-              title="Containers"
-              value="1 Running"
-              icon={<Server className="h-4 w-4" />}
+              title="Runtime"
+              value={built ? "Secure" : "Not Built"}
+              icon={<ShieldCheck className="h-4 w-4" />}
             />
           </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={runDockerBuild}
+              disabled={started}
+              className={`rounded-2xl px-5 py-3 text-sm font-bold text-white transition ${
+                started
+                  ? "cursor-not-allowed bg-accent/60"
+                  : "bg-gradient-to-r from-accent via-emerald-500 to-cyan-500"
+              }`}
+            >
+              {started ? "Building..." : "Run Production Docker Build"}
+            </button>
+
+            {(built || activeStage >= 0) && (
+              <button
+                onClick={resetDockerBuild}
+                className="rounded-2xl border border-border bg-card/70 px-5 py-3 text-sm font-semibold text-muted-foreground transition hover:bg-card"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/55 p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Production Dockerfile
+            </p>
+
+            <TerminalBox
+              title="Dockerfile.prod"
+              lines={[
+                "FROM node:20-alpine AS base",
+                "WORKDIR /app",
+                "",
+                "FROM base AS deps",
+                "COPY package*.json ./",
+                "RUN npm ci",
+                "",
+                "FROM base AS builder",
+                "COPY --from=deps /app/node_modules ./node_modules",
+                "COPY . .",
+                "RUN npm run build",
+                "",
+                "FROM node:20-alpine AS runtime",
+                "WORKDIR /app",
+                "COPY --from=builder /app/dist ./dist",
+                'CMD ["node","dist/server.js"]',
+              ]}
+            />
+          </div>
+
+          <TerminalBox
+            lines={logLines}
+            title="ashik@docker-builder — production build log"
+          />
         </div>
       </div>
     </PanelShell>
