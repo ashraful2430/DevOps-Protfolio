@@ -45,12 +45,13 @@ const tabs = [
 export default function Skills() {
   const [activeTab, setActiveTab] = useState<TabKey>("devops");
   const [activeSkill, setActiveSkill] = useState<SkillKey>("cicd");
-  const [selectedCardKey, setSelectedCardKey] = useState<DisplaySkillKey>("aws");
+  const [selectedCardKey, setSelectedCardKey] =
+    useState<DisplaySkillKey>("aws");
   const [showAll, setShowAll] = useState(false);
 
   const skills = useMemo(
     () => (activeTab === "devops" ? devopsSkills : mernSkills),
-    [activeTab]
+    [activeTab],
   );
 
   const visibleSkills = showAll ? skills : skills.slice(0, 10);
@@ -227,7 +228,11 @@ export default function Skills() {
                     />
                     <motion.div
                       animate={{ opacity: [0.25, 0.5, 0.25] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 1.8,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                       className="absolute inset-0 rounded-3xl bg-accent/5"
                     />
                   </>
@@ -257,8 +262,8 @@ export default function Skills() {
                       isSelected
                         ? "bg-accent text-white shadow-[0_8px_20px_rgba(16,185,129,0.25)]"
                         : skill.proficiency >= 90
-                        ? "bg-accent/15 text-accent"
-                        : "bg-cyan-500/10 text-cyan-600 dark:text-cyan-300"
+                          ? "bg-accent/15 text-accent"
+                          : "bg-cyan-500/10 text-cyan-600 dark:text-cyan-300"
                     }`}
                   >
                     {skill.proficiency}%
@@ -284,7 +289,10 @@ export default function Skills() {
                       initial={{ width: 0 }}
                       whileInView={{ width: `${skill.proficiency}%` }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.85, delay: 0.06 + index * 0.02 }}
+                      transition={{
+                        duration: 0.85,
+                        delay: 0.06 + index * 0.02,
+                      }}
                       className={`h-full rounded-full ${
                         isSelected
                           ? "bg-gradient-to-r from-accent via-emerald-400 to-cyan-400"

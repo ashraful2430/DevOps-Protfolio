@@ -1,6 +1,17 @@
 "use client";
 
-import { CICDAnimation } from "@/components/skills/SkillAnimations";
+import {
+  AWSAnimation,
+  AnsibleAnimation,
+  CICDAnimation,
+  DockerAnimation,
+  GitAnimation,
+  K8sAnimation,
+  LinuxAnimation,
+  NginxAnimation,
+  PrometheusAnimation,
+  TerraformAnimation,
+} from "@/components/skills/SkillAnimations";
 import { ReactNode } from "react";
 import type { SkillKey } from "@/components/Skills";
 
@@ -51,12 +62,26 @@ function resolveAnimation(skill: SkillKey): ReactNode {
   switch (skill) {
     case "cicd":
       return <CICDAnimation />;
+    case "docker":
+      return <DockerAnimation />;
+    case "k8s":
+      return <K8sAnimation />;
+    case "terraform":
+      return <TerraformAnimation />;
+    case "ansible":
+      return <AnsibleAnimation />;
+    case "aws":
+      return <AWSAnimation />;
+    case "prometheus":
+      return <PrometheusAnimation />;
+    case "git":
+      return <GitAnimation />;
+    case "linux":
+      return <LinuxAnimation />;
+    case "nginx":
+      return <NginxAnimation />;
     default:
-      return (
-        <div className="rounded-2xl border border-border bg-card/70 p-6 text-sm text-muted-foreground">
-          This animation panel is not connected yet.
-        </div>
-      );
+      return null;
   }
 }
 
