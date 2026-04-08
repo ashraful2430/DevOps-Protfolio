@@ -6,6 +6,7 @@ import {
   CICDAnimation,
   DockerAnimation,
   GitAnimation,
+  JenkinsAnimation,
   K8sAnimation,
   LinuxAnimation,
   NginxAnimation,
@@ -56,6 +57,10 @@ const descriptions: Record<SkillKey, { title: string; subtitle: string }> = {
     title: "Nginx — reverse proxy request flow",
     subtitle: "Requests route through Nginx to healthy upstreams",
   },
+  jenkins: {
+    title: "Jenkins — automated pipeline stages",
+    subtitle: "Checkout → Build → Test → Package → Deploy with live job output",
+  },
 };
 
 function resolveAnimation(skill: SkillKey): ReactNode {
@@ -80,6 +85,8 @@ function resolveAnimation(skill: SkillKey): ReactNode {
       return <LinuxAnimation />;
     case "nginx":
       return <NginxAnimation />;
+    case "jenkins":
+      return <JenkinsAnimation />;
     default:
       return null;
   }

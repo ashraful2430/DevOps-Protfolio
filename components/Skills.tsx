@@ -17,7 +17,8 @@ export type SkillKey =
   | "prometheus"
   | "git"
   | "linux"
-  | "nginx";
+  | "nginx"
+  | "jenkins";
 
 type DisplaySkillKey = SkillKey | string;
 
@@ -33,7 +34,7 @@ const interactiveMap: Record<string, SkillKey | null> = {
   git: "git",
   gitlab: "cicd",
   "github-actions": "cicd",
-  jenkins: "cicd",
+  jenkins: "jenkins",
   argocd: "cicd",
 };
 

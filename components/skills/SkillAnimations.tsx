@@ -143,14 +143,14 @@ function PanelShell({
 }) {
   return (
     <div className="overflow-hidden rounded-3xl border border-border bg-card/80 shadow-[0_20px_60px_rgba(0,0,0,0.16)] backdrop-blur-xl">
-      <div className="flex flex-col gap-4 border-b border-border/70 bg-background/45 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="flex flex-col gap-3 border-b border-border/70 bg-background/45 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
           <p className="text-base font-semibold text-foreground">{title}</p>
           <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
             {subtitle}
           </p>
         </div>
-        {action}
+        <div className="w-full sm:w-auto">{action}</div>
       </div>
       <div className="p-4 sm:p-6">{children}</div>
     </div>
@@ -1293,6 +1293,290 @@ export function AnsibleAnimation() {
               lines={logLines}
               title="ashik@ansible-control — playbook output"
               heightClass="h-[160px] sm:h-[200px] lg:h-[220px]"
+            />
+          </div>
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
+export function JenkinsAnimation() {
+  const stages = [
+    {
+      key: "checkout",
+      label: "Checkout",
+      detail: "Pull latest source from repository",
+      logs: [
+        "$ git clone git@github.com:ashraful2430/portfolio.git",
+        "Cloning into 'portfolio'...",
+        "Receiving objects: 100%",
+        "✓ Repository checkout complete",
+      ],
+    },
+    {
+      key: "build",
+      label: "Build",
+      detail: "Install dependencies and compile app",
+      logs: [
+        "$ npm ci",
+        "Installing dependencies...",
+        "$ npm run build",
+        "✓ Production build generated",
+      ],
+    },
+    {
+      key: "test",
+      label: "Test",
+      detail: "Run automated test suite",
+      logs: [
+        "$ npm run test -- --ci",
+        "PASS Hero.test.tsx",
+        "PASS Skills.test.tsx",
+        "✓ All tests passed",
+      ],
+    },
+    {
+      key: "package",
+      label: "Package",
+      detail: "Create artifact for deployment",
+      logs: [
+        "$ tar -czf release.tar.gz .next public package.json",
+        "Compressing application files...",
+        "✓ release.tar.gz created",
+      ],
+    },
+    {
+      key: "deploy",
+      label: "Deploy",
+      detail: "Push artifact to target environment",
+      logs: [
+        "$ ./deploy.sh production",
+        "Uploading release artifact...",
+        "Restarting service...",
+        "✓ Deployment completed",
+      ],
+    },
+  ];
+
+  const [started, setStarted] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [activeStage, setActiveStage] = useState(-1);
+  const [logLines, setLogLines] = useState<string[]>([
+    "# Jenkins pipeline is ready",
+    "# Click the button below to run the job",
+  ]);
+
+  async function runJenkinsJob() {
+    if (started) return;
+
+    setStarted(true);
+    setFinished(false);
+    setActiveStage(-1);
+    setLogLines([
+      "[Jenkins] Started by user Ashraful",
+      "[Pipeline] Start of Pipeline",
+      "[Pipeline] node",
+    ]);
+
+    for (let i = 0; i < stages.length; i++) {
+      setActiveStage(i);
+      await sleep(750);
+
+      setLogLines((prev) => [
+        ...prev,
+        "",
+        `[Stage] ${stages[i].label}`,
+        ...stages[i].logs,
+      ]);
+    }
+
+    await sleep(500);
+
+    setLogLines((prev) => [
+      ...prev,
+      "",
+      "[Pipeline] End of Pipeline",
+      "Finished: SUCCESS",
+      "✓ Jenkins job completed successfully",
+    ]);
+
+    setStarted(false);
+    setFinished(true);
+  }
+
+  function resetJenkinsJob() {
+    setStarted(false);
+    setFinished(false);
+    setActiveStage(-1);
+    setLogLines([
+      "# Jenkins pipeline is ready",
+      "# Click the button below to run the job",
+    ]);
+  }
+
+  const progress =
+    activeStage < 0
+      ? 0
+      : finished
+        ? 100
+        : Math.round(((activeStage + 1) / stages.length) * 100);
+
+  return (
+    <PanelShell
+      title="Jenkins — automated pipeline stages"
+      subtitle="Checkout → Build → Test → Package → Deploy"
+      action={
+        <div className="w-full sm:w-auto">
+          <span
+            className={`inline-flex w-full items-center justify-center rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] sm:w-auto sm:text-[11px] ${
+              started
+                ? "border border-yellow-500/30 bg-gradient-to-r from-yellow-500/12 to-amber-400/10 text-yellow-300"
+                : finished
+                  ? "border border-accent/30 bg-gradient-to-r from-accent/12 to-emerald-400/10 text-accent"
+                  : "border border-border bg-gradient-to-r from-card/80 to-background/70 text-muted-foreground"
+            }`}
+          >
+            {started ? "Running" : finished ? "Success" : "Ready"}
+          </span>
+        </div>
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-5">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">
+                Pipeline Stages
+              </p>
+              <span className="text-xs font-semibold text-accent">
+                {progress}%
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {stages.map((stage, i) => {
+                const isDone = finished || i < activeStage;
+                const isActive = i === activeStage && started;
+
+                return (
+                  <motion.div
+                    key={stage.key}
+                    animate={{
+                      opacity: isDone || isActive ? 1 : 0.55,
+                      scale: isActive ? 1.01 : 1,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    className={`rounded-xl border px-3 py-3 sm:px-4 ${
+                      isActive
+                        ? "border-yellow-500/30 bg-yellow-500/10"
+                        : isDone
+                          ? "border-accent/30 bg-accent/10"
+                          : "border-border/70 bg-background/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {stage.label}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {stage.detail}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                          isActive
+                            ? "bg-yellow-500/15 text-yellow-300"
+                            : isDone
+                              ? "bg-accent/15 text-accent"
+                              : "bg-card text-muted-foreground"
+                        }`}
+                      >
+                        {isActive ? "Running" : isDone ? "Done" : "Pending"}
+                      </span>
+                    </div>
+
+                    <div className="mt-3">
+                      <TinyProgress value={isDone ? 100 : isActive ? 65 : 8} />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <MiniCard
+              title="Job Status"
+              value={finished ? "Success" : started ? "Running" : "Idle"}
+              icon={<Activity className="h-4 w-4" />}
+            />
+            <MiniCard
+              title="Agent"
+              value="docker-node"
+              icon={<Server className="h-4 w-4" />}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={runJenkinsJob}
+              disabled={started}
+              className={`w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition sm:w-auto ${
+                started
+                  ? "cursor-not-allowed bg-accent/60"
+                  : "bg-gradient-to-r from-accent to-cyan-500"
+              }`}
+            >
+              {started ? "Running Job..." : "Run Jenkins Job"}
+            </button>
+
+            {(finished || activeStage >= 0) && (
+              <button
+                onClick={resetJenkinsJob}
+                className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition hover:bg-card sm:w-auto"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4 min-w-0">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Jenkinsfile
+            </p>
+
+            <TerminalBox
+              title="Jenkinsfile"
+              heightClass="h-[150px] sm:h-[180px] lg:h-[190px]"
+              lines={[
+                "pipeline {",
+                "  agent any",
+                "  stages {",
+                "    stage('Checkout') { steps { git 'repo-url' } }",
+                "    stage('Build') { steps { sh 'npm ci && npm run build' } }",
+                "    stage('Test') { steps { sh 'npm run test -- --ci' } }",
+                "    stage('Package') { steps { sh 'tar -czf release.tar.gz .next public' } }",
+                "    stage('Deploy') { steps { sh './deploy.sh production' } }",
+                "  }",
+                "}",
+              ]}
+            />
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Job Output
+            </p>
+
+            <TerminalBox
+              lines={logLines}
+              title="jenkins@pipeline-agent — console output"
+              heightClass="h-[170px] sm:h-[220px] lg:h-[250px]"
             />
           </div>
         </div>
