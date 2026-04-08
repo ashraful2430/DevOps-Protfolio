@@ -74,7 +74,7 @@ export default function SkillPanel({ skill }: { skill: SkillKey }) {
         </div>
 
         <span className="ml-auto inline-flex w-fit items-center rounded-full border border-accent/30 bg-gradient-to-r from-accent/12 to-cyan-400/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-accent shadow-[0_0_20px_rgba(29,158,117,0.08)]">
-          Done
+          Interactive
         </span>
       </div>
 
