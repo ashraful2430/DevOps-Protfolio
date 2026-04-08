@@ -1585,6 +1585,289 @@ export function JenkinsAnimation() {
   );
 }
 
+export function ArgoCDAnimation() {
+  const stages = [
+    {
+      key: "detect",
+      label: "Detect Change",
+      detail: "ArgoCD detects a new Git commit",
+      logs: [
+        "[ArgoCD] Watching repository state...",
+        "New commit detected on main branch",
+        "Application manifest changed",
+      ],
+    },
+    {
+      key: "compare",
+      label: "Compare State",
+      detail: "Desired state compared with cluster",
+      logs: [
+        "[ArgoCD] Comparing desired and live state",
+        "OutOfSync resources found",
+        "Preparing sync operation",
+      ],
+    },
+    {
+      key: "sync",
+      label: "Sync App",
+      detail: "Apply manifests to cluster",
+      logs: [
+        "[ArgoCD] Applying deployment manifests",
+        "Service updated successfully",
+        "Ingress configuration applied",
+      ],
+    },
+    {
+      key: "rollout",
+      label: "Rollout",
+      detail: "Kubernetes starts rolling update",
+      logs: [
+        "[Kubernetes] Starting rolling update",
+        "New pods are becoming ready",
+        "Old replicas terminating gradually",
+      ],
+    },
+    {
+      key: "healthy",
+      label: "Healthy",
+      detail: "Application reaches healthy state",
+      logs: [
+        "[ArgoCD] Application status: Synced",
+        "[ArgoCD] Health status: Healthy",
+        "✓ GitOps sync completed successfully",
+      ],
+    },
+  ];
+
+  const [started, setStarted] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [activeStage, setActiveStage] = useState(-1);
+  const [logLines, setLogLines] = useState<string[]>([
+    "# ArgoCD application is ready",
+    "# Click the button to simulate a GitOps sync",
+  ]);
+
+  async function runSync() {
+    if (started) return;
+
+    setStarted(true);
+    setFinished(false);
+    setActiveStage(-1);
+    setLogLines([
+      "$ argocd app sync portfolio-app",
+      "TIMESTAMP                  GROUP        KIND           NAMESPACE  NAME",
+    ]);
+
+    for (let i = 0; i < stages.length; i++) {
+      setActiveStage(i);
+      await sleep(850);
+
+      setLogLines((prev) => [
+        ...prev,
+        "",
+        `[Stage] ${stages[i].label}`,
+        ...stages[i].logs,
+      ]);
+    }
+
+    await sleep(400);
+
+    setLogLines((prev) => [
+      ...prev,
+      "",
+      "$ argocd app get portfolio-app",
+      "Sync Status: Synced",
+      "Health Status: Healthy",
+      "✓ Deployment is now fully reconciled",
+    ]);
+
+    setStarted(false);
+    setFinished(true);
+  }
+
+  function resetSync() {
+    setStarted(false);
+    setFinished(false);
+    setActiveStage(-1);
+    setLogLines([
+      "# ArgoCD application is ready",
+      "# Click the button to simulate a GitOps sync",
+    ]);
+  }
+
+  const progress =
+    activeStage < 0
+      ? 0
+      : finished
+        ? 100
+        : Math.round(((activeStage + 1) / stages.length) * 100);
+
+  return (
+    <PanelShell
+      title="ArgoCD — GitOps deployment sync"
+      subtitle="Git change → sync → rollout → healthy application state"
+      action={
+        <div className="w-full sm:w-auto">
+          <span
+            className={`inline-flex w-full items-center justify-center rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] sm:w-auto sm:text-[11px] ${
+              started
+                ? "border border-yellow-500/30 bg-gradient-to-r from-yellow-500/12 to-amber-400/10 text-yellow-300"
+                : finished
+                  ? "border border-accent/30 bg-gradient-to-r from-accent/12 to-emerald-400/10 text-accent"
+                  : "border border-border bg-gradient-to-r from-card/80 to-background/70 text-muted-foreground"
+            }`}
+          >
+            {started ? "Syncing" : finished ? "Healthy" : "Ready"}
+          </span>
+        </div>
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-5">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">
+                Sync Stages
+              </p>
+              <span className="text-xs font-semibold text-accent">
+                {progress}%
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {stages.map((stage, i) => {
+                const isDone = finished || i < activeStage;
+                const isActive = i === activeStage && started;
+
+                return (
+                  <motion.div
+                    key={stage.key}
+                    animate={{
+                      opacity: isDone || isActive ? 1 : 0.55,
+                      scale: isActive ? 1.01 : 1,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    className={`rounded-xl border px-3 py-3 sm:px-4 ${
+                      isActive
+                        ? "border-yellow-500/30 bg-yellow-500/10"
+                        : isDone
+                          ? "border-accent/30 bg-accent/10"
+                          : "border-border/70 bg-background/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {stage.label}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {stage.detail}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                          isActive
+                            ? "bg-yellow-500/15 text-yellow-300"
+                            : isDone
+                              ? "bg-accent/15 text-accent"
+                              : "bg-card text-muted-foreground"
+                        }`}
+                      >
+                        {isActive ? "Syncing" : isDone ? "Done" : "Pending"}
+                      </span>
+                    </div>
+
+                    <div className="mt-3">
+                      <TinyProgress value={isDone ? 100 : isActive ? 65 : 8} />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <MiniCard
+              title="Sync Status"
+              value={finished ? "Synced" : started ? "OutOfSync" : "Idle"}
+              icon={<GitBranch className="h-4 w-4" />}
+            />
+            <MiniCard
+              title="Health"
+              value={finished ? "Healthy" : started ? "Progressing" : "Unknown"}
+              icon={<ShieldCheck className="h-4 w-4" />}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={runSync}
+              disabled={started}
+              className={`w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition sm:w-auto ${
+                started
+                  ? "cursor-not-allowed bg-accent/60"
+                  : "bg-gradient-to-r from-accent to-cyan-500"
+              }`}
+            >
+              {started ? "Syncing..." : "Run ArgoCD Sync"}
+            </button>
+
+            {(finished || activeStage >= 0) && (
+              <button
+                onClick={resetSync}
+                className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition hover:bg-card sm:w-auto"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4 min-w-0">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Application Manifest
+            </p>
+
+            <TerminalBox
+              title="application.yaml"
+              heightClass="h-[150px] sm:h-[180px] lg:h-[190px]"
+              lines={[
+                "apiVersion: argoproj.io/v1alpha1",
+                "kind: Application",
+                "metadata:",
+                "  name: portfolio-app",
+                "spec:",
+                "  source:",
+                "    repoURL: git@github.com:ashraful2430/portfolio.git",
+                "    path: k8s/",
+                "  destination:",
+                "    namespace: production",
+                "    server: https://kubernetes.default.svc",
+                "  syncPolicy:",
+                "    automated: {}",
+              ]}
+            />
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Sync Output
+            </p>
+
+            <TerminalBox
+              lines={logLines}
+              title="argocd@control-plane — sync output"
+              heightClass="h-[170px] sm:h-[220px] lg:h-[250px]"
+            />
+          </div>
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
 export function AWSAnimation() {
   const services = [
     { key: "ec2", label: "EC2", desc: "Compute for app workloads" },

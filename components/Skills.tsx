@@ -18,7 +18,8 @@ export type SkillKey =
   | "git"
   | "linux"
   | "nginx"
-  | "jenkins";
+  | "jenkins"
+  | "argocd";
 
 type DisplaySkillKey = SkillKey | string;
 
@@ -35,7 +36,7 @@ const interactiveMap: Record<string, SkillKey | null> = {
   gitlab: "cicd",
   "github-actions": "cicd",
   jenkins: "jenkins",
-  argocd: "cicd",
+  argocd: "argocd",
 };
 
 const tabs = [

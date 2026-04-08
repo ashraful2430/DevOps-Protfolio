@@ -3,6 +3,7 @@
 import {
   AWSAnimation,
   AnsibleAnimation,
+  ArgoCDAnimation,
   CICDAnimation,
   DockerAnimation,
   GitAnimation,
@@ -61,12 +62,18 @@ const descriptions: Record<SkillKey, { title: string; subtitle: string }> = {
     title: "Jenkins — automated pipeline stages",
     subtitle: "Checkout → Build → Test → Package → Deploy with live job output",
   },
+  argocd: {
+    title: "ArgoCD — GitOps deployment sync",
+    subtitle: "Git change → sync → rollout → healthy application state",
+  },
 };
 
 function resolveAnimation(skill: SkillKey): ReactNode {
   switch (skill) {
     case "cicd":
       return <CICDAnimation />;
+    case "argocd":
+      return <ArgoCDAnimation />;
     case "docker":
       return <DockerAnimation />;
     case "k8s":
