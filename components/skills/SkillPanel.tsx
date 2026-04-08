@@ -7,6 +7,7 @@ import {
   CICDAnimation,
   DockerAnimation,
   GitAnimation,
+  GrafanaAnimation,
   JenkinsAnimation,
   K8sAnimation,
   LinuxAnimation,
@@ -45,6 +46,10 @@ const descriptions: Record<SkillKey, { title: string; subtitle: string }> = {
   prometheus: {
     title: "Prometheus — monitoring & alerting",
     subtitle: "Metrics rise, threshold hits, alert gets triggered",
+  },
+  grafana: {
+    title: "Grafana — dashboards & observability",
+    subtitle: "Metrics panels, alert visibility, and system health in one view",
   },
   git: {
     title: "Git Flow — collaborative development",
@@ -86,6 +91,8 @@ function resolveAnimation(skill: SkillKey): ReactNode {
       return <AWSAnimation />;
     case "prometheus":
       return <PrometheusAnimation />;
+    case "grafana":
+      return <GrafanaAnimation />;
     case "git":
       return <GitAnimation />;
     case "linux":

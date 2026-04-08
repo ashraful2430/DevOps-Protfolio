@@ -2033,6 +2033,195 @@ export function PrometheusAnimation() {
   );
 }
 
+export function GrafanaAnimation() {
+  const panels = [
+    { key: "cpu", title: "CPU Usage", value: "42%", trend: "up" },
+    { key: "memory", title: "Memory", value: "68%", trend: "stable" },
+    { key: "requests", title: "Req / sec", value: "1.8k", trend: "up" },
+    { key: "latency", title: "Latency", value: "84ms", trend: "down" },
+  ];
+
+  const [activePanel, setActivePanel] = useState(0);
+  const [liveMode, setLiveMode] = useState(false);
+
+  useEffect(() => {
+    if (!liveMode) return;
+    const t = setInterval(() => {
+      setActivePanel((p) => (p + 1) % panels.length);
+    }, 1400);
+    return () => clearInterval(t);
+  }, [liveMode, panels.length]);
+
+  const chartBars =
+    activePanel === 0
+      ? [35, 48, 44, 58, 62, 55, 68, 42]
+      : activePanel === 1
+        ? [50, 58, 63, 66, 64, 70, 68, 72]
+        : activePanel === 2
+          ? [20, 35, 40, 52, 61, 74, 66, 80]
+          : [70, 62, 58, 49, 44, 39, 36, 30];
+
+  const statusTone = activePanel === 3 ? "warning" : "success";
+
+  return (
+    <PanelShell
+      title="Grafana — dashboards & observability"
+      subtitle="Metrics panels, alert visibility, and system health in one view"
+      action={
+        <div className="w-full sm:w-auto">
+          <span
+            className={`inline-flex w-full items-center justify-center rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] sm:w-auto sm:text-[11px] ${
+              liveMode
+                ? "border border-accent/30 bg-gradient-to-r from-accent/12 to-emerald-400/10 text-accent"
+                : "border border-border bg-gradient-to-r from-card/80 to-background/70 text-muted-foreground"
+            }`}
+          >
+            {liveMode ? "Live View" : "Dashboard"}
+          </span>
+        </div>
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-5">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            {panels.map((panel, i) => {
+              const isActive = i === activePanel;
+              return (
+                <button
+                  key={panel.key}
+                  onClick={() => setActivePanel(i)}
+                  className={`rounded-2xl border p-4 text-left transition ${
+                    isActive
+                      ? "border-accent/35 bg-accent/10 shadow-[0_0_20px_rgba(16,185,129,0.12)]"
+                      : "border-border/70 bg-card/60 hover:border-accent/20"
+                  }`}
+                >
+                  <p className="text-xs text-muted-foreground">{panel.title}</p>
+                  <p className="mt-2 text-xl font-bold text-foreground">
+                    {panel.value}
+                  </p>
+                  <p
+                    className={`mt-2 text-[11px] font-semibold uppercase ${
+                      panel.trend === "up"
+                        ? "text-accent"
+                        : panel.trend === "down"
+                          ? "text-yellow-300"
+                          : "text-muted-foreground"
+                    }`}
+                  >
+                    {panel.trend}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">
+                Active Panel
+              </p>
+              <StatusBadge
+                label={statusTone === "success" ? "Healthy" : "Watch"}
+                tone={statusTone}
+              />
+            </div>
+
+            <div className="flex h-52 items-end gap-3 rounded-xl border border-border/60 bg-background/60 p-4">
+              {chartBars.map((bar, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ height: 0 }}
+                  animate={{ height: `${bar}%` }}
+                  transition={{ duration: 0.5, delay: i * 0.04 }}
+                  className={`w-full rounded-t-xl ${
+                    activePanel === 3
+                      ? "bg-gradient-to-t from-yellow-500 to-amber-300"
+                      : "bg-gradient-to-t from-accent via-emerald-400 to-cyan-400"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={() => setLiveMode((p) => !p)}
+              className="w-full rounded-xl bg-gradient-to-r from-accent to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white transition sm:w-auto"
+            >
+              {liveMode ? "Stop Live Mode" : "Start Live Mode"}
+            </button>
+
+            <button
+              onClick={() => {
+                setLiveMode(false);
+                setActivePanel(0);
+              }}
+              className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition hover:bg-card sm:w-auto"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-4 min-w-0">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Dashboard Summary
+            </p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <MiniCard
+                title="Dashboards"
+                value="12"
+                icon={<Layers3 className="h-4 w-4" />}
+              />
+              <MiniCard
+                title="Alerts"
+                value={activePanel === 3 ? "3 Active" : "1 Active"}
+                icon={<ShieldCheck className="h-4 w-4" />}
+              />
+              <MiniCard
+                title="Data Source"
+                value="Prometheus"
+                icon={<Database className="h-4 w-4" />}
+              />
+              <MiniCard
+                title="Refresh"
+                value={liveMode ? "Live" : "10s"}
+                icon={<Activity className="h-4 w-4" />}
+              />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Panel Notes
+            </p>
+
+            <TerminalBox
+              title="grafana@dashboard"
+              heightClass="h-[170px] sm:h-[210px] lg:h-[240px]"
+              lines={[
+                `$ panel: ${panels[activePanel].title}`,
+                `value: ${panels[activePanel].value}`,
+                `trend: ${panels[activePanel].trend}`,
+                "",
+                liveMode ? "live mode: enabled" : "live mode: disabled",
+                "datasource: prometheus",
+                "dashboard: production-observability",
+                activePanel === 3
+                  ? "note: latency spike detected, review upstreams"
+                  : "note: metrics within expected operating range",
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
 export function GitAnimation() {
   const commits = [
     "feat: add metrics endpoint",

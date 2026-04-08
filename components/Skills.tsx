@@ -15,6 +15,7 @@ export type SkillKey =
   | "ansible"
   | "aws"
   | "prometheus"
+  | "grafana"
   | "git"
   | "linux"
   | "nginx"
@@ -30,6 +31,7 @@ const interactiveMap: Record<string, SkillKey | null> = {
   ansible: "ansible",
   aws: "aws",
   prometheus: "prometheus",
+  grafana: "grafana",
   nginx: "nginx",
   linux: "linux",
   git: "git",
