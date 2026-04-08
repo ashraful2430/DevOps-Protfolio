@@ -7,11 +7,14 @@ import {
   CICDAnimation,
   DockerAnimation,
   GitAnimation,
+  GithubAnimation,
   GrafanaAnimation,
   JenkinsAnimation,
   K8sAnimation,
   LinuxAnimation,
+  MongoDBAnimation,
   NginxAnimation,
+  PostgreSQLAnimation,
   PrometheusAnimation,
   TerraformAnimation,
 } from "@/components/skills/SkillAnimations";
@@ -67,6 +70,18 @@ const descriptions: Record<SkillKey, { title: string; subtitle: string }> = {
     title: "Jenkins — automated pipeline stages",
     subtitle: "Checkout → Build → Test → Package → Deploy with live job output",
   },
+  github: {
+    title: "GitHub — repository collaboration flow",
+    subtitle: "Commits, pull requests, reviews, and merge workflow",
+  },
+  postgresql: {
+    title: "PostgreSQL — relational database operations",
+    subtitle: "Structured data, SQL queries, indexing, and transactions",
+  },
+  mongodb: {
+    title: "MongoDB — document database flow",
+    subtitle: "Collections, documents, flexible schema, and query pipeline",
+  },
   argocd: {
     title: "ArgoCD — GitOps deployment sync",
     subtitle: "Git change → sync → rollout → healthy application state",
@@ -101,6 +116,12 @@ function resolveAnimation(skill: SkillKey): ReactNode {
       return <NginxAnimation />;
     case "jenkins":
       return <JenkinsAnimation />;
+    case "github":
+      return <GithubAnimation />;
+    case "postgresql":
+      return <PostgreSQLAnimation />;
+    case "mongodb":
+      return <MongoDBAnimation />;
     default:
       return null;
   }

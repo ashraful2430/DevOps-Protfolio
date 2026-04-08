@@ -192,7 +192,7 @@ function StatusBadge({
 function TerminalBox({
   lines,
   title = "ashik@devops-machine",
-  heightClass = "h-[350px]",
+  heightClass = "min-h-[120px] max-h-[220px]",
 }: {
   lines: string[];
   title?: string;
@@ -243,7 +243,6 @@ function TerminalBox({
     </div>
   );
 }
-
 function TinyProgress({ value }: { value: number }) {
   return (
     <div className="h-2 overflow-hidden rounded-full bg-border/60">
@@ -508,39 +507,40 @@ export function CICDAnimation() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
               className="rounded-2xl border border-border bg-gradient-to-r from-background/80 to-card/50 px-4 py-3 shadow-sm"
             >
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/70 bg-card/80">
-                    <Settings2 className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground">
-                      {currentStep.label}
-                    </p>
-                    <p className="mt-1 break-words font-mono text-xs leading-5 text-accent">
-                      $ {currentStep.command}
-                    </p>
-                  </div>
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/70 bg-card/80">
+                  <Settings2 className="h-4 w-4 text-muted-foreground" />
                 </div>
 
-                <StatusBadge
-                  label={
+                <div className="min-w-0 flex-1">
+                  <p className="text-lg font-semibold text-foreground">
+                    {currentStep.label}
+                  </p>
+                  <p className="mt-1 break-words font-mono text-sm leading-6 text-accent">
+                    $ {currentStep.command}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-center">
+                <span
+                  className={`inline-flex min-w-[160px] items-center justify-center rounded-full px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.16em] ${
                     statuses[activeStep!] === "done"
-                      ? "Done"
+                      ? "border border-accent/30 bg-gradient-to-r from-accent/12 to-emerald-400/10 text-accent shadow-[0_0_14px_rgba(29,158,117,0.12)]"
                       : statuses[activeStep!] === "running"
-                        ? "Running"
-                        : "Idle"
-                  }
-                  tone={
-                    statuses[activeStep!] === "done"
-                      ? "success"
-                      : statuses[activeStep!] === "running"
-                        ? "warning"
-                        : "default"
-                  }
-                />
+                        ? "border border-yellow-500/30 bg-gradient-to-r from-yellow-500/12 to-amber-400/10 text-yellow-300 shadow-[0_0_14px_rgba(234,179,8,0.12)]"
+                        : "border border-border bg-gradient-to-r from-card/80 to-background/70 text-muted-foreground"
+                  }`}
+                >
+                  {statuses[activeStep!] === "done"
+                    ? "Done"
+                    : statuses[activeStep!] === "running"
+                      ? "Running"
+                      : "Idle"}
+                </span>
               </div>
             </motion.div>
           )}
@@ -1258,7 +1258,7 @@ export function AnsibleAnimation() {
 
             <TerminalBox
               title="deploy.yml"
-              heightClass="h-[140px] sm:h-[170px] lg:h-[180px]"
+              heightClass="h-[140px] sm:h-[170px] lg:h-[190px]"
               lines={[
                 "- hosts: all",
                 "  become: true",
@@ -2445,6 +2445,305 @@ export function NginxAnimation() {
             value="Enabled"
             icon={<ShieldCheck className="h-4 w-4" />}
           />
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
+export function GithubAnimation() {
+  const steps = [
+    "Create feature branch",
+    "Commit changes",
+    "Push to remote",
+    "Open pull request",
+    "Code review approved",
+    "Merge to main",
+  ];
+
+  const [active, setActive] = useState(-1);
+  const [running, setRunning] = useState(false);
+  const [done, setDone] = useState(false);
+  const [logs, setLogs] = useState<string[]>([
+    "# GitHub workflow ready",
+    "# Click below to simulate collaboration flow",
+  ]);
+
+  async function runFlow() {
+    if (running) return;
+    setRunning(true);
+    setDone(false);
+    setActive(-1);
+    setLogs([
+      "$ git checkout -b feature/portfolio-update",
+      "$ git add . && git commit -m 'improve portfolio skills section'",
+    ]);
+
+    for (let i = 0; i < steps.length; i++) {
+      setActive(i);
+      await sleep(700);
+      setLogs((prev) => [...prev, "", `✓ ${steps[i]}`]);
+    }
+
+    setLogs((prev) => [
+      ...prev,
+      "",
+      "✓ Pull request merged successfully",
+      "✓ Main branch updated",
+    ]);
+    setRunning(false);
+    setDone(true);
+  }
+
+  function resetFlow() {
+    setActive(-1);
+    setRunning(false);
+    setDone(false);
+    setLogs([
+      "# GitHub workflow ready",
+      "# Click below to simulate collaboration flow",
+    ]);
+  }
+
+  return (
+    <PanelShell
+      title="GitHub — repository collaboration flow"
+      subtitle="Commits, pull requests, reviews, and merge workflow"
+      action={
+        <StatusBadge
+          label={running ? "Running" : done ? "Merged" : "Ready"}
+          tone={running ? "warning" : done ? "success" : "default"}
+        />
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-4">
+            <p className="mb-4 text-sm font-semibold text-foreground">
+              Workflow Steps
+            </p>
+            <div className="space-y-3">
+              {steps.map((step, i) => {
+                const isDone = done || i < active;
+                const isActive = running && i === active;
+                return (
+                  <div
+                    key={step}
+                    className={`rounded-xl border px-4 py-3 ${
+                      isActive
+                        ? "border-yellow-500/30 bg-yellow-500/10"
+                        : isDone
+                          ? "border-accent/30 bg-accent/10"
+                          : "border-border/70 bg-background/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm text-foreground">{step}</span>
+                      <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                        {isActive ? "Running" : isDone ? "Done" : "Pending"}
+                      </span>
+                    </div>
+                    <div className="mt-3">
+                      <TinyProgress value={isDone ? 100 : isActive ? 60 : 8} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={runFlow}
+              disabled={running}
+              className={`w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white sm:w-auto ${
+                running
+                  ? "cursor-not-allowed bg-accent/60"
+                  : "bg-gradient-to-r from-accent to-cyan-500"
+              }`}
+            >
+              {running ? "Running..." : "Run GitHub Flow"}
+            </button>
+            {(done || active >= 0) && (
+              <button
+                onClick={resetFlow}
+                className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground sm:w-auto"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
+        <TerminalBox
+          lines={logs}
+          title="github@repo — collaboration log"
+          heightClass="h-[140px] sm:h-[170px] lg:h-[190px]"
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function PostgreSQLAnimation() {
+  const queries = [
+    "SELECT * FROM users LIMIT 10;",
+    "CREATE INDEX idx_email ON users(email);",
+    "BEGIN; UPDATE orders SET status='paid' WHERE id=101; COMMIT;",
+    "EXPLAIN ANALYZE SELECT * FROM enrollments WHERE user_id = 5;",
+  ];
+
+  const [selected, setSelected] = useState(0);
+
+  const outputs = [
+    [
+      " id | name  | email",
+      "----+-------+--------------------",
+      " 1  | Ashik | ashik@mail.com",
+      " 2  | Rahim | rahim@mail.com",
+      " 3  | Karim | karim@mail.com",
+    ],
+    ["CREATE INDEX", "✓ idx_email created successfully"],
+    ["BEGIN", "UPDATE 1", "COMMIT", "✓ Transaction completed"],
+    [
+      "Seq Scan on enrollments ...",
+      "Execution Time: 3.12 ms",
+      "✓ Query analyzed",
+    ],
+  ];
+
+  return (
+    <PanelShell
+      title="PostgreSQL — relational database operations"
+      subtitle="Structured data, SQL queries, indexing, and transactions"
+      action={<StatusBadge label="SQL" tone="success" />}
+    >
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-3">
+          {queries.map((query, i) => (
+            <button
+              key={i}
+              onClick={() => setSelected(i)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left ${
+                selected === i
+                  ? "border-accent/30 bg-accent/10"
+                  : "border-border/70 bg-card/60"
+              }`}
+            >
+              <p className="font-mono text-xs text-foreground">{query}</p>
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          <TerminalBox
+            title="psql@postgres"
+            heightClass="h-[190px] sm:h-[230px]"
+            lines={[
+              `postgres=# ${queries[selected]}`,
+              "",
+              ...outputs[selected],
+            ]}
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <MiniCard
+              title="Tables"
+              value="24"
+              icon={<Database className="h-4 w-4" />}
+            />
+            <MiniCard
+              title="Indexes"
+              value="16"
+              icon={<ShieldCheck className="h-4 w-4" />}
+            />
+          </div>
+        </div>
+      </div>
+    </PanelShell>
+  );
+}
+
+export function MongoDBAnimation() {
+  const operations = [
+    {
+      title: "Find Documents",
+      query: 'db.users.find({ role: "student" })',
+      result: [
+        '{ name: "Ashik", role: "student" }',
+        '{ name: "Rahim", role: "student" }',
+      ],
+    },
+    {
+      title: "Insert Document",
+      query: 'db.orders.insertOne({ user: "Ashik", total: 1500 })',
+      result: ["acknowledged: true", 'insertedId: ObjectId("65ab12...")'],
+    },
+    {
+      title: "Update Document",
+      query:
+        'db.users.updateOne({ name: "Ashik" }, { $set: { active: true } })',
+      result: ["matchedCount: 1", "modifiedCount: 1"],
+    },
+    {
+      title: "Aggregation",
+      query:
+        'db.orders.aggregate([{ $group: { _id: "$status", total: { $sum: 1 } } }])',
+      result: ['{ _id: "paid", total: 12 }', '{ _id: "pending", total: 4 }'],
+    },
+  ];
+
+  const [selected, setSelected] = useState(0);
+
+  return (
+    <PanelShell
+      title="MongoDB — document database flow"
+      subtitle="Collections, documents, flexible schema, and query pipeline"
+      action={<StatusBadge label="NoSQL" tone="success" />}
+    >
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-3">
+          {operations.map((op, i) => (
+            <button
+              key={op.title}
+              onClick={() => setSelected(i)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left ${
+                selected === i
+                  ? "border-accent/30 bg-accent/10"
+                  : "border-border/70 bg-card/60"
+              }`}
+            >
+              <p className="text-sm font-semibold text-foreground">
+                {op.title}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Interactive document operation
+              </p>
+            </button>
+          ))}
+        </div>
+
+        <div className="space-y-4">
+          <TerminalBox
+            title="mongo@shell"
+            heightClass="h-[190px] sm:h-[230px]"
+            lines={[
+              `> ${operations[selected].query}`,
+              "",
+              ...operations[selected].result,
+            ]}
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <MiniCard
+              title="Collections"
+              value="18"
+              icon={<Database className="h-4 w-4" />}
+            />
+            <MiniCard
+              title="Documents"
+              value="12.4k"
+              icon={<Activity className="h-4 w-4" />}
+            />
+          </div>
         </div>
       </div>
     </PanelShell>

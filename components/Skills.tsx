@@ -17,10 +17,13 @@ export type SkillKey =
   | "prometheus"
   | "grafana"
   | "git"
+  | "github"
   | "linux"
   | "nginx"
   | "jenkins"
-  | "argocd";
+  | "argocd"
+  | "postgresql"
+  | "mongodb";
 
 type DisplaySkillKey = SkillKey | string;
 
@@ -35,10 +38,13 @@ const interactiveMap: Record<string, SkillKey | null> = {
   nginx: "nginx",
   linux: "linux",
   git: "git",
+  github: "github",
   gitlab: "cicd",
   "github-actions": "cicd",
   jenkins: "jenkins",
   argocd: "argocd",
+  postgresql: "postgresql",
+  mongodb: "mongodb",
 };
 
 const tabs = [
