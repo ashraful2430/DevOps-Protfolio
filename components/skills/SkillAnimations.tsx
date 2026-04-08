@@ -1049,66 +1049,251 @@ export function AnsibleAnimation() {
     "Restart services",
     "Health check",
   ];
-  const [step, setStep] = useState(0);
 
-  useEffect(() => {
-    const t = setInterval(() => setStep((p) => (p + 1) % tasks.length), 1300);
-    return () => clearInterval(t);
-  }, []);
+  const [started, setStarted] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [activeTask, setActiveTask] = useState(-1);
+  const [logLines, setLogLines] = useState<string[]>([
+    "# Ansible playbook is ready",
+    "# Click the button to run automation across nodes",
+  ]);
+
+  async function runPlaybook() {
+    if (started) return;
+
+    setStarted(true);
+    setFinished(false);
+    setActiveTask(-1);
+    setLogLines([
+      "$ ansible-playbook deploy.yml -i inventory.ini",
+      "PLAY [all] ********************************************************",
+    ]);
+
+    for (let i = 0; i < tasks.length; i++) {
+      setActiveTask(i);
+      await sleep(800);
+
+      setLogLines((prev) => [
+        ...prev,
+        "",
+        `TASK [${tasks[i]}] ***********************************************`,
+        ...hosts.map((host) => `changed: [${host}]`),
+      ]);
+    }
+
+    await sleep(500);
+
+    setLogLines((prev) => [
+      ...prev,
+      "",
+      "PLAY RECAP ********************************************************",
+      "web-01    : ok=4 changed=4 unreachable=0 failed=0",
+      "web-02    : ok=4 changed=4 unreachable=0 failed=0",
+      "worker-01 : ok=4 changed=4 unreachable=0 failed=0",
+      "db-01     : ok=4 changed=4 unreachable=0 failed=0",
+      "",
+      "✓ Automation completed successfully",
+    ]);
+
+    setStarted(false);
+    setFinished(true);
+  }
+
+  function resetPlaybook() {
+    setStarted(false);
+    setFinished(false);
+    setActiveTask(-1);
+    setLogLines([
+      "# Ansible playbook is ready",
+      "# Click the button to run automation across nodes",
+    ]);
+  }
+
+  const progress =
+    activeTask < 0
+      ? 0
+      : finished
+        ? 100
+        : Math.round(((activeTask + 1) / tasks.length) * 100);
 
   return (
     <PanelShell
       title="Ansible — remote automation flow"
       subtitle="Inventory → Playbook → Tasks executed across nodes"
-      action={<StatusBadge label="Automating" tone="warning" />}
+      action={
+        <div className="w-full sm:w-auto">
+          <span
+            className={`inline-flex w-full items-center justify-center rounded-full px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] sm:w-auto sm:text-[11px] ${
+              started
+                ? "border border-yellow-500/30 bg-gradient-to-r from-yellow-500/12 to-amber-400/10 text-yellow-300"
+                : finished
+                  ? "border border-accent/30 bg-gradient-to-r from-accent/12 to-emerald-400/10 text-accent"
+                  : "border border-border bg-gradient-to-r from-card/80 to-background/70 text-muted-foreground"
+            }`}
+          >
+            {started ? "Running" : finished ? "Done" : "Ready"}
+          </span>
+        </div>
+      }
     >
-      <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
-        <div className="rounded-2xl border border-border/70 bg-card/60 p-4">
-          <p className="mb-4 text-sm font-semibold text-foreground">Hosts</p>
-          <div className="space-y-3">
-            {hosts.map((host) => (
-              <div
-                key={host}
-                className="flex items-center justify-between rounded-xl border border-border/70 bg-background/60 px-4 py-3"
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-5">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">Hosts</p>
+              <span className="text-xs text-muted-foreground">
+                {hosts.length} nodes
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {hosts.map((host) => (
+                <div
+                  key={host}
+                  className="flex items-center justify-between gap-2 rounded-xl border border-border/70 bg-background/60 px-3 py-2.5 sm:px-4"
+                >
+                  <span className="truncate text-sm text-foreground">
+                    {host}
+                  </span>
+                  <span className="shrink-0 rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold text-accent">
+                    OK
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">
+                Playbook Tasks
+              </p>
+              <span className="text-xs font-semibold text-accent">
+                {progress}%
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {tasks.map((task, i) => {
+                const isDone = finished || i < activeTask;
+                const isActive = i === activeTask && started;
+
+                return (
+                  <motion.div
+                    key={task}
+                    animate={{
+                      opacity: isDone || isActive ? 1 : 0.55,
+                      scale: isActive ? 1.01 : 1,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    className={`rounded-xl border px-3 py-3 sm:px-4 ${
+                      isActive
+                        ? "border-yellow-500/30 bg-yellow-500/10"
+                        : isDone
+                          ? "border-accent/30 bg-accent/10"
+                          : "border-border/70 bg-background/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm text-foreground">{task}</span>
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                          isActive
+                            ? "bg-yellow-500/15 text-yellow-300"
+                            : isDone
+                              ? "bg-accent/15 text-accent"
+                              : "bg-card text-muted-foreground"
+                        }`}
+                      >
+                        {isActive ? "Running" : isDone ? "Done" : "Pending"}
+                      </span>
+                    </div>
+
+                    <div className="mt-2 h-[4px] w-full overflow-hidden rounded-full bg-border/60">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          isDone
+                            ? "w-full bg-accent"
+                            : isActive
+                              ? "w-2/3 bg-yellow-400"
+                              : "w-[10%] bg-muted-foreground/30"
+                        }`}
+                      />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={runPlaybook}
+              disabled={started}
+              className={`w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition sm:w-auto ${
+                started
+                  ? "cursor-not-allowed bg-accent/60"
+                  : "bg-gradient-to-r from-accent to-cyan-500"
+              }`}
+            >
+              {started ? "Running..." : "Run Playbook"}
+            </button>
+
+            {(finished || activeTask >= 0) && (
+              <button
+                onClick={resetPlaybook}
+                className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition hover:bg-card sm:w-auto"
               >
-                <span className="text-sm text-foreground">{host}</span>
-                <span className="rounded-full bg-accent/10 px-2.5 py-1 text-[10px] font-bold uppercase text-accent">
-                  Connected
-                </span>
-              </div>
-            ))}
+                Reset
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/70 bg-card/60 p-4">
-          <p className="mb-4 text-sm font-semibold text-foreground">
-            Playbook Tasks
-          </p>
-          <div className="space-y-3">
-            {tasks.map((task, i) => (
-              <motion.div
-                key={task}
-                animate={{
-                  opacity: i <= step ? 1 : 0.45,
-                  x: i === step ? [0, 4, 0] : 0,
-                }}
-                transition={{ duration: 0.4 }}
-                className={`rounded-xl border px-4 py-3 ${
-                  i < step
-                    ? "border-accent/30 bg-accent/10"
-                    : i === step
-                      ? "border-yellow-500/30 bg-yellow-500/10"
-                      : "border-border/70 bg-background/60"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-foreground">{task}</span>
-                  <span className="text-xs font-semibold text-muted-foreground">
-                    {i < step ? "Done" : i === step ? "Running" : "Queued"}
-                  </span>
-                </div>
-              </motion.div>
-            ))}
+        <div className="space-y-4 min-w-0">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Ansible Playbook
+            </p>
+
+            <TerminalBox
+              title="deploy.yml"
+              heightClass="h-[140px] sm:h-[170px] lg:h-[180px]"
+              lines={[
+                "- hosts: all",
+                "  become: true",
+                "  tasks:",
+                "    - name: Install packages",
+                "      apt:",
+                "        name: nginx",
+                "        state: present",
+                "",
+                "    - name: Sync config",
+                "      template:",
+                "        src: nginx.conf.j2",
+                "        dest: /etc/nginx/nginx.conf",
+                "",
+                "    - name: Restart services",
+                "      service:",
+                "        name: nginx",
+                "        state: restarted",
+                "",
+                "    - name: Health check",
+                "      shell: systemctl status nginx",
+              ]}
+            />
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Playbook Output
+            </p>
+
+            <TerminalBox
+              lines={logLines}
+              title="ashik@ansible-control — playbook output"
+              heightClass="h-[160px] sm:h-[200px] lg:h-[220px]"
+            />
           </div>
         </div>
       </div>
