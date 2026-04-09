@@ -341,7 +341,15 @@ export default function Hero() {
               </a>
 
               <a
-                href={`mailto:${personalInfo.email}`}
+                href={
+                  personalInfo.email
+                    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+                        personalInfo.email,
+                      )}`
+                    : "#"
+                }
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl border border-border bg-card/80 px-4 py-2 text-sm text-muted-foreground backdrop-blur-md transition hover:border-accent hover:text-accent"
               >
                 <Mail className="h-4 w-4" />
@@ -523,7 +531,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        <div className="mt-10 flex justify-center lg:mt-14">
+        <div className="mt-4flex justify-center lg:mt-4">
           <ScrollIndicator />
         </div>
       </div>
