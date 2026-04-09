@@ -4,11 +4,14 @@ import {
   AWSAnimation,
   AnsibleAnimation,
   ArgoCDAnimation,
+  BashAnimation,
   CICDAnimation,
   DockerAnimation,
+  EC2Animation,
   GitAnimation,
   GithubAnimation,
   GrafanaAnimation,
+  IAMAnimation,
   JenkinsAnimation,
   K8sAnimation,
   LinuxAnimation,
@@ -16,7 +19,11 @@ import {
   NginxAnimation,
   PostgreSQLAnimation,
   PrometheusAnimation,
+  RDSAnimation,
+  S3Animation,
   TerraformAnimation,
+  VPCAnimation,
+  HelmAnimation,
 } from "@/components/skills/SkillAnimations";
 import { ReactNode } from "react";
 import type { SkillKey } from "@/components/Skills";
@@ -29,6 +36,39 @@ const descriptions: Record<SkillKey, { title: string; subtitle: string }> = {
   docker: {
     title: "Docker — image build flow",
     subtitle: "Source → Dockerfile → Layers → Image → Container",
+  },
+  vpc: {
+    title: "VPC — cloud network architecture",
+    subtitle:
+      "Subnets, routing, gateways, and secure private/public segmentation",
+  },
+  ec2: {
+    title: "EC2 — compute instance lifecycle",
+    subtitle:
+      "Launch, configure, monitor, and serve workloads on virtual machines",
+  },
+  rds: {
+    title: "RDS — managed database workflow",
+    subtitle:
+      "Provision, connect, backup, and monitor managed relational databases",
+  },
+  s3: {
+    title: "S3 — object storage operations",
+    subtitle: "Store, retrieve, and manage files with scalable cloud storage",
+  },
+  iam: {
+    title: "IAM — access control and permissions",
+    subtitle: "Users, roles, policies, and least-privilege access flow",
+  },
+  bash: {
+    title: "Bash/Shell — automation scripting",
+    subtitle:
+      "Command chaining, scripting, environment control, and task automation",
+  },
+  helm: {
+    title: "Helm — Kubernetes package management",
+    subtitle:
+      "Chart values, template rendering, release install and upgrade flow",
   },
   k8s: {
     title: "Kubernetes — self-healing cluster",
@@ -104,6 +144,20 @@ function resolveAnimation(skill: SkillKey): ReactNode {
       return <AnsibleAnimation />;
     case "aws":
       return <AWSAnimation />;
+    case "vpc":
+      return <VPCAnimation />;
+    case "ec2":
+      return <EC2Animation />;
+    case "rds":
+      return <RDSAnimation />;
+    case "s3":
+      return <S3Animation />;
+    case "iam":
+      return <IAMAnimation />;
+    case "bash":
+      return <BashAnimation />;
+    case "helm":
+      return <HelmAnimation />;
     case "prometheus":
       return <PrometheusAnimation />;
     case "grafana":

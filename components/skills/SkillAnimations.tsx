@@ -2749,3 +2749,666 @@ export function MongoDBAnimation() {
     </PanelShell>
   );
 }
+
+export function VPCAnimation() {
+  const zones = [
+    { name: "Public Subnet", status: "Active" },
+    { name: "Private App Subnet", status: "Active" },
+    { name: "Private DB Subnet", status: "Protected" },
+  ];
+
+  return (
+    <PanelShell
+      title="VPC — cloud network architecture"
+      subtitle="Subnets, routing, gateways, and secure private/public segmentation"
+      action={<StatusBadge label="Network" tone="success" />}
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <div className="rounded-2xl border border-border/70 bg-card/60 p-4">
+          <p className="mb-4 text-sm font-semibold text-foreground">
+            VPC Layout
+          </p>
+          <div className="space-y-3">
+            {zones.map((zone) => (
+              <div
+                key={zone.name}
+                className="rounded-xl border border-border/70 bg-background/60 px-4 py-4"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-foreground">
+                    {zone.name}
+                  </span>
+                  <span className="rounded-full bg-accent/10 px-2.5 py-1 text-[10px] font-bold uppercase text-accent">
+                    {zone.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <TerminalBox
+          title="vpc@network-view"
+          heightClass="h-[170px] sm:h-[210px]"
+          lines={[
+            "VPC CIDR: 10.0.0.0/16",
+            "Internet Gateway attached",
+            "Route table configured",
+            "Public subnet routes → IGW",
+            "Private subnet routes → NAT Gateway",
+            "✓ Network segmentation applied",
+          ]}
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function EC2Animation() {
+  const [state, setState] = useState<"Stopped" | "Pending" | "Running">(
+    "Stopped",
+  );
+
+  async function startInstance() {
+    if (state !== "Stopped") return;
+    setState("Pending");
+    await sleep(1200);
+    setState("Running");
+  }
+
+  function resetInstance() {
+    setState("Stopped");
+  }
+
+  return (
+    <PanelShell
+      title="EC2 — compute instance lifecycle"
+      subtitle="Launch, configure, monitor, and serve workloads on virtual machines"
+      action={
+        <StatusBadge
+          label={state}
+          tone={
+            state === "Running"
+              ? "success"
+              : state === "Pending"
+                ? "warning"
+                : "default"
+          }
+        />
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <div className="space-y-4">
+          <MiniCard
+            title="Instance Type"
+            value="t3.medium"
+            icon={<Server className="h-4 w-4" />}
+          />
+          <MiniCard
+            title="AMI"
+            value="Ubuntu 22.04"
+            icon={<Layers3 className="h-4 w-4" />}
+          />
+          <MiniCard
+            title="Public IP"
+            value={state === "Running" ? "18.12.44.91" : "--"}
+            icon={<Globe className="h-4 w-4" />}
+          />
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={startInstance}
+              disabled={state !== "Stopped"}
+              className="w-full rounded-xl bg-gradient-to-r from-accent to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white sm:w-auto"
+            >
+              {state === "Stopped"
+                ? "Start Instance"
+                : state === "Pending"
+                  ? "Starting..."
+                  : "Running"}
+            </button>
+            <button
+              onClick={resetInstance}
+              className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground sm:w-auto"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <TerminalBox
+          title="ec2@instance-console"
+          heightClass="h-[170px] sm:h-[210px]"
+          lines={[
+            "$ systemctl status nginx",
+            state === "Stopped"
+              ? "Instance is offline"
+              : state === "Pending"
+                ? "Boot sequence in progress..."
+                : "nginx.service active (running)",
+            "",
+            "$ top",
+            state === "Running" ? "CPU: 12% | MEM: 48%" : "--",
+            "",
+            state === "Running"
+              ? "✓ App server reachable"
+              : "Waiting for instance health checks...",
+          ]}
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function RDSAnimation() {
+  const [selected, setSelected] = useState(0);
+  const tabs = ["Provision", "Connect", "Backup", "Monitor"];
+
+  return (
+    <PanelShell
+      title="RDS — managed database workflow"
+      subtitle="Provision, connect, backup, and monitor managed relational databases"
+      action={<StatusBadge label="Managed DB" tone="success" />}
+    >
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-3">
+          {tabs.map((tab, i) => (
+            <button
+              key={tab}
+              onClick={() => setSelected(i)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left ${
+                selected === i
+                  ? "border-accent/30 bg-accent/10"
+                  : "border-border/70 bg-card/60"
+              }`}
+            >
+              <p className="text-sm font-semibold text-foreground">{tab}</p>
+            </button>
+          ))}
+        </div>
+
+        <TerminalBox
+          title="rds@database"
+          heightClass="h-[180px] sm:h-[220px]"
+          lines={
+            selected === 0
+              ? [
+                  "Creating db.t3.micro instance...",
+                  "Allocating storage...",
+                  "Configuring subnet group...",
+                  "✓ RDS instance available",
+                ]
+              : selected === 1
+                ? [
+                    "Host: mydb.xxxxxx.rds.amazonaws.com",
+                    "Port: 5432",
+                    "SSL: enabled",
+                    "✓ Connection successful",
+                  ]
+                : selected === 2
+                  ? [
+                      "Backup window: 03:00 UTC",
+                      "Snapshot started...",
+                      "Snapshot completed",
+                      "✓ Automated backup healthy",
+                    ]
+                  : [
+                      "CPU: 18%",
+                      "Connections: 42",
+                      "Replica lag: 0 ms",
+                      "✓ Metrics normal",
+                    ]
+          }
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function S3Animation() {
+  const [uploaded, setUploaded] = useState(false);
+
+  return (
+    <PanelShell
+      title="S3 — object storage operations"
+      subtitle="Store, retrieve, and manage files with scalable cloud storage"
+      action={
+        <StatusBadge
+          label={uploaded ? "Stored" : "Bucket Ready"}
+          tone="success"
+        />
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-4">
+            <p className="text-sm font-semibold text-foreground">Bucket</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              portfolio-assets-prod
+            </p>
+            <div className="mt-4">
+              <TinyProgress value={uploaded ? 100 : 18} />
+            </div>
+          </div>
+
+          <button
+            onClick={() => setUploaded((p) => !p)}
+            className="rounded-xl bg-gradient-to-r from-accent to-cyan-500 px-4 py-2.5 text-sm font-semibold text-white"
+          >
+            {uploaded ? "Reset Upload" : "Upload File"}
+          </button>
+        </div>
+
+        <TerminalBox
+          title="s3@bucket"
+          heightClass="h-[170px] sm:h-[210px]"
+          lines={[
+            "$ aws s3 cp build.zip s3://portfolio-assets-prod/",
+            uploaded
+              ? "upload: ./build.zip to s3://portfolio-assets-prod/build.zip"
+              : "waiting for upload...",
+            "",
+            uploaded
+              ? "✓ object stored successfully"
+              : "bucket policy validated",
+            uploaded ? "ACL: private" : "versioning enabled",
+          ]}
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function IAMAnimation() {
+  const roles = ["Developer", "DevOpsAdmin", "ReadOnlyAuditor"];
+  const [selected, setSelected] = useState(1);
+
+  return (
+    <PanelShell
+      title="IAM — access control and permissions"
+      subtitle="Users, roles, policies, and least-privilege access flow"
+      action={<StatusBadge label="Secured" tone="success" />}
+    >
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-3">
+          {roles.map((role, i) => (
+            <button
+              key={role}
+              onClick={() => setSelected(i)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left ${
+                selected === i
+                  ? "border-accent/30 bg-accent/10"
+                  : "border-border/70 bg-card/60"
+              }`}
+            >
+              <p className="text-sm font-semibold text-foreground">{role}</p>
+            </button>
+          ))}
+        </div>
+
+        <TerminalBox
+          title="iam@policy-view"
+          heightClass="h-[180px] sm:h-[220px]"
+          lines={
+            selected === 0
+              ? [
+                  "Role: Developer",
+                  "Permissions: ECS read, S3 read/write limited",
+                  "Policy: least privilege",
+                  "✓ Safe developer access",
+                ]
+              : selected === 1
+                ? [
+                    "Role: DevOpsAdmin",
+                    "Permissions: EC2, ECS, IAM pass role, CloudWatch",
+                    "MFA: required",
+                    "✓ Elevated operational access",
+                  ]
+                : [
+                    "Role: ReadOnlyAuditor",
+                    "Permissions: CloudTrail read, Config read",
+                    "No write actions allowed",
+                    "✓ Audit-safe access",
+                  ]
+          }
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function BashAnimation() {
+  const scripts = ["backup.sh", "deploy.sh", "health-check.sh", "cleanup.sh"];
+  const [selected, setSelected] = useState(0);
+
+  const outputs = [
+    [
+      "#!/bin/bash",
+      "tar -czf backup.tar.gz /var/www/app",
+      "aws s3 cp backup.tar.gz s3://backups/",
+      "✓ Backup completed",
+    ],
+    [
+      "#!/bin/bash",
+      "git pull origin main",
+      "docker compose up -d --build",
+      "✓ Deployment completed",
+    ],
+    [
+      "#!/bin/bash",
+      "curl -f http://localhost:3000/status",
+      "echo 'app healthy'",
+      "✓ Health check passed",
+    ],
+    [
+      "#!/bin/bash",
+      "docker image prune -af",
+      "rm -rf /tmp/build-cache",
+      "✓ Cleanup completed",
+    ],
+  ];
+
+  return (
+    <PanelShell
+      title="Bash/Shell — automation scripting"
+      subtitle="Command chaining, scripting, environment control, and task automation"
+      action={<StatusBadge label="Shell" tone="success" />}
+    >
+      <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+        <div className="space-y-3">
+          {scripts.map((script, i) => (
+            <button
+              key={script}
+              onClick={() => setSelected(i)}
+              className={`w-full rounded-2xl border px-4 py-3 text-left ${
+                selected === i
+                  ? "border-accent/30 bg-accent/10"
+                  : "border-border/70 bg-card/60"
+              }`}
+            >
+              <p className="font-mono text-sm text-foreground">{script}</p>
+            </button>
+          ))}
+        </div>
+
+        <TerminalBox
+          title="bash@shell"
+          heightClass="h-[190px] sm:h-[230px]"
+          lines={outputs[selected]}
+        />
+      </div>
+    </PanelShell>
+  );
+}
+
+export function HelmAnimation() {
+  const steps = [
+    {
+      key: "chart",
+      label: "Load Chart",
+      detail: "Read Helm chart structure and metadata",
+      logs: [
+        "$ helm lint portfolio-chart",
+        "==> Linting portfolio-chart",
+        "1 chart(s) linted, 0 chart(s) failed",
+      ],
+    },
+    {
+      key: "values",
+      label: "Apply Values",
+      detail: "Inject environment-specific values",
+      logs: [
+        "$ helm template portfolio ./chart -f values-prod.yaml",
+        "Using values from values-prod.yaml",
+        "Rendering templates with production values",
+      ],
+    },
+    {
+      key: "render",
+      label: "Render Templates",
+      detail: "Generate Kubernetes manifests",
+      logs: [
+        "deployment.yaml rendered",
+        "service.yaml rendered",
+        "ingress.yaml rendered",
+      ],
+    },
+    {
+      key: "install",
+      label: "Install Release",
+      detail: "Create or update Helm release",
+      logs: [
+        "$ helm upgrade --install portfolio ./chart -n production",
+        "Release 'portfolio' has been upgraded",
+        "NAME: portfolio",
+      ],
+    },
+    {
+      key: "verify",
+      label: "Verify Release",
+      detail: "Confirm rollout and release health",
+      logs: [
+        "$ helm list -n production",
+        "portfolio   deployed   1.2.0",
+        "✓ Release healthy and deployed",
+      ],
+    },
+  ];
+
+  const [started, setStarted] = useState(false);
+  const [finished, setFinished] = useState(false);
+  const [activeStep, setActiveStep] = useState(-1);
+  const [logLines, setLogLines] = useState<string[]>([
+    "# Helm chart is ready",
+    "# Click below to simulate a production release",
+  ]);
+
+  async function runHelmRelease() {
+    if (started) return;
+
+    setStarted(true);
+    setFinished(false);
+    setActiveStep(-1);
+    setLogLines([
+      "$ helm repo update",
+      "Hang tight while we grab the latest from your chart repositories...",
+      "Update Complete.",
+    ]);
+
+    for (let i = 0; i < steps.length; i++) {
+      setActiveStep(i);
+      await sleep(750);
+
+      setLogLines((prev) => [
+        ...prev,
+        "",
+        `[Step] ${steps[i].label}`,
+        ...steps[i].logs,
+      ]);
+    }
+
+    setLogLines((prev) => [
+      ...prev,
+      "",
+      "$ kubectl get pods -n production",
+      "portfolio-7db9d7f8c9-2xk9m   Running",
+      "portfolio-7db9d7f8c9-bn7pd   Running",
+      "✓ Helm release completed successfully",
+    ]);
+
+    setStarted(false);
+    setFinished(true);
+  }
+
+  function resetHelmRelease() {
+    setStarted(false);
+    setFinished(false);
+    setActiveStep(-1);
+    setLogLines([
+      "# Helm chart is ready",
+      "# Click below to simulate a production release",
+    ]);
+  }
+
+  const progress =
+    activeStep < 0
+      ? 0
+      : finished
+        ? 100
+        : Math.round(((activeStep + 1) / steps.length) * 100);
+
+  return (
+    <PanelShell
+      title="Helm — Kubernetes package management"
+      subtitle="Chart values, template rendering, release install and upgrade flow"
+      action={
+        <StatusBadge
+          label={started ? "Deploying" : finished ? "Released" : "Ready"}
+          tone={started ? "warning" : finished ? "success" : "default"}
+        />
+      }
+    >
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr] lg:gap-5">
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <p className="text-sm font-semibold text-foreground">
+                Release Steps
+              </p>
+              <span className="text-xs font-semibold text-accent">
+                {progress}%
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {steps.map((step, i) => {
+                const isDone = finished || i < activeStep;
+                const isActive = i === activeStep && started;
+
+                return (
+                  <motion.div
+                    key={step.key}
+                    animate={{
+                      opacity: isDone || isActive ? 1 : 0.55,
+                      scale: isActive ? 1.01 : 1,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    className={`rounded-xl border px-3 py-3 sm:px-4 ${
+                      isActive
+                        ? "border-yellow-500/30 bg-yellow-500/10"
+                        : isDone
+                          ? "border-accent/30 bg-accent/10"
+                          : "border-border/70 bg-background/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {step.label}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {step.detail}
+                        </p>
+                      </div>
+
+                      <span
+                        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                          isActive
+                            ? "bg-yellow-500/15 text-yellow-300"
+                            : isDone
+                              ? "bg-accent/15 text-accent"
+                              : "bg-card text-muted-foreground"
+                        }`}
+                      >
+                        {isActive ? "Running" : isDone ? "Done" : "Pending"}
+                      </span>
+                    </div>
+
+                    <div className="mt-3">
+                      <TinyProgress value={isDone ? 100 : isActive ? 65 : 8} />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <MiniCard
+              title="Release"
+              value={finished ? "portfolio" : "Pending"}
+              icon={<Layers3 className="h-4 w-4" />}
+            />
+            <MiniCard
+              title="Namespace"
+              value="production"
+              icon={<ShieldCheck className="h-4 w-4" />}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              onClick={runHelmRelease}
+              disabled={started}
+              className={`w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition sm:w-auto ${
+                started
+                  ? "cursor-not-allowed bg-accent/60"
+                  : "bg-gradient-to-r from-accent to-cyan-500"
+              }`}
+            >
+              {started ? "Deploying..." : "Run Helm Release"}
+            </button>
+
+            {(finished || activeStep >= 0) && (
+              <button
+                onClick={resetHelmRelease}
+                className="w-full rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition hover:bg-card sm:w-auto"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-4 min-w-0">
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              values-prod.yaml
+            </p>
+
+            <TerminalBox
+              title="values-prod.yaml"
+              heightClass="h-[150px] sm:h-[180px] lg:h-[190px]"
+              lines={[
+                "replicaCount: 2",
+                "image:",
+                "  repository: portfolio-app",
+                "  tag: 1.2.0",
+                "service:",
+                "  type: ClusterIP",
+                "ingress:",
+                "  enabled: true",
+                "resources:",
+                "  limits:",
+                "    cpu: 500m",
+                "    memory: 512Mi",
+              ]}
+            />
+          </div>
+
+          <div className="rounded-2xl border border-border/70 bg-card/60 p-3 sm:p-4">
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              Helm Output
+            </p>
+
+            <TerminalBox
+              lines={logLines}
+              title="helm@release-manager"
+              heightClass="h-[170px] sm:h-[220px] lg:h-[250px]"
+            />
+          </div>
+        </div>
+      </div>
+    </PanelShell>
+  );
+}

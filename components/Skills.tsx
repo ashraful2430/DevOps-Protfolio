@@ -14,6 +14,13 @@ export type SkillKey =
   | "terraform"
   | "ansible"
   | "aws"
+  | "vpc"
+  | "ec2"
+  | "rds"
+  | "s3"
+  | "iam"
+  | "bash"
+  | "helm"
   | "prometheus"
   | "grafana"
   | "git"
@@ -33,6 +40,13 @@ const interactiveMap: Record<string, SkillKey | null> = {
   terraform: "terraform",
   ansible: "ansible",
   aws: "aws",
+  vpc: "vpc",
+  ec2: "ec2",
+  rds: "rds",
+  s3: "s3",
+  iam: "iam",
+  bash: "bash",
+  helm: "helm",
   prometheus: "prometheus",
   grafana: "grafana",
   nginx: "nginx",
