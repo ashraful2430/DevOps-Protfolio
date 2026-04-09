@@ -13,6 +13,7 @@ import {
   ServerCog,
 } from "lucide-react";
 import { personalInfo } from "@/lib/data";
+import ScrollIndicator from "@/components/ScollIndicator";
 
 const centerWords = ["DEVOPS", "CI/CD", "K8S", "AWS", "LINUX", "DOCKER"];
 
@@ -391,33 +392,57 @@ export default function Hero() {
                   <div className="relative flex h-56 w-56 items-center justify-center sm:h-64 sm:w-64">
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 18,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                       className="absolute h-full w-full rounded-full border border-accent/25"
                     />
                     <motion.div
                       animate={{ rotate: -360 }}
-                      transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 26,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                       className="absolute h-[82%] w-[82%] rounded-full border border-cyan-400/20"
                     />
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 14,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                       className="absolute h-[62%] w-[62%] rounded-full border border-emerald-400/20"
                     />
 
                     <motion.span
                       animate={{ y: [0, -10, 0], x: [0, 5, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                       className="absolute left-5 top-12 h-3.5 w-3.5 rounded-full bg-accent shadow-[0_0_26px_rgba(29,158,117,0.7)]"
                     />
                     <motion.span
                       animate={{ y: [0, 12, 0], x: [0, -6, 0] }}
-                      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                       className="absolute right-4 top-16 h-3.5 w-3.5 rounded-full bg-cyan-400 shadow-[0_0_26px_rgba(34,211,238,0.7)]"
                     />
                     <motion.span
                       animate={{ y: [0, -10, 0], x: [0, 8, 0] }}
-                      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                      transition={{
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
                       className="absolute bottom-8 left-9 h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_24px_rgba(52,211,153,0.7)]"
                     />
 
@@ -472,10 +497,10 @@ export default function Hero() {
                               isCommand
                                 ? "text-emerald-400"
                                 : isStatus
-                                ? "text-cyan-400"
-                                : isInfra
-                                ? "text-violet-400"
-                                : "text-muted-foreground"
+                                  ? "text-cyan-400"
+                                  : isInfra
+                                    ? "text-violet-400"
+                                    : "text-muted-foreground"
                             }
                           >
                             {line || "\u00A0"}
@@ -496,6 +521,10 @@ export default function Hero() {
               </motion.div>
             </div>
           </motion.div>
+        </div>
+
+        <div className="mt-10 flex justify-center lg:mt-14">
+          <ScrollIndicator />
         </div>
       </div>
     </section>
