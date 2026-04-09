@@ -376,9 +376,9 @@ export const projects = [
     title: "Techno Trend Store",
     subtitle: "An online platform to buy computers, mobiles, and tech products",
     image: "/projects/techno-trend-store.png",
-    liveUrl: "https://your-live-link.com",
-    clientUrl: "https://github.com/ashraful2430/your-client-repo",
-    serverUrl: "https://github.com/ashraful2430/your-server-repo",
+    liveUrl: "https://my-tenth-assignment-5a6bc.web.app/",
+    clientUrl: "https://github.com/ashraful2430/brand-shop-client",
+    serverUrl: "https://github.com/ashraful2430/brand-shop-server",
     description:
       "An e-commerce platform focused on technology products, offering a smooth browsing and shopping experience for customers.",
     features: [

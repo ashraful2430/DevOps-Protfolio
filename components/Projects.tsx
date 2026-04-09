@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import { ExternalLink, FolderGit2, Server } from "lucide-react";
 import { projects } from "@/lib/data";
-import CICDPipelineSimulator from "@/components/CICDPipelineSimulator";
-import InfrastructureMap from "@/components/InfrastructureMap";
 
 const accentBars = [
   "from-emerald-500 to-cyan-500",
@@ -130,14 +128,8 @@ export default function Projects() {
               </motion.div>
             ))}
           </div>
-
-          <div className="mt-12">
-            <CICDPipelineSimulator />
-          </div>
         </div>
       </section>
-
-      <InfrastructureMap />
     </>
   );
 }
