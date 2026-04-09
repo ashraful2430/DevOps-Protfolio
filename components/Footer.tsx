@@ -199,9 +199,7 @@ export default function Footer() {
                 </h4>
                 <div className="space-y-2 text-sm text-muted-foreground">
                   <p>{personalInfo.email}</p>
-                  {"phone" in personalInfo && personalInfo.phone && (
-                    <p>{personalInfo.phone}</p>
-                  )}
+                  {personalInfo.phone ? <p>{personalInfo.phone}</p> : null}
                   <p>Bangladesh</p>
                 </div>
               </div>

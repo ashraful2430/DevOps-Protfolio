@@ -35,7 +35,7 @@ export const personalInfo = {
     "I am a DevOps Engineer with hands-on experience in cloud infrastructure, automation, container orchestration, monitoring, and deployment workflows. I enjoy building reliable systems, automating delivery pipelines, and improving platform visibility using AWS, Docker, Kubernetes, Terraform, Ansible, CI/CD, Prometheus, Grafana, Linux, and Nginx.",
   company: "SDB IT",
   location: "Dhaka, Bangladesh",
-  phone: +8801735407128,
+  phone: "+8801735407128",
   email: "ashrafulislamashik960@gmail.com",
   github: "https://github.com/ashraful2430",
   linkedin: "https://www.linkedin.com/in/ashraful-islam-ashik-7085a22a0/",
