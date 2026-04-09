@@ -14,13 +14,56 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://your-domain.com";
+const ogImage = "/og-image.png";
+
 export const metadata: Metadata = {
-  title: "Ashraful Islam Ashik | DevOps Engineer",
-  description: "DevOps Engineer portfolio built with Next.js and TypeScript.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Ashraful Islam Ashik | DevOps Engineer",
+    template: "%s | Ashraful Islam Ashik",
+  },
+  description:
+    "Portfolio of Ashraful Islam Ashik, a DevOps Engineer focused on Docker, Kubernetes, CI/CD, cloud infrastructure, monitoring, and scalable deployment workflows.",
+  keywords: [
+    "Ashraful Islam Ashik",
+    "DevOps Engineer",
+    "Docker",
+    "Kubernetes",
+    "CI/CD",
+    "AWS",
+    "Prometheus",
+    "Grafana",
+    "Next.js Portfolio",
+  ],
+  authors: [{ name: "Ashraful Islam Ashik" }],
+  creator: "Ashraful Islam Ashik",
   openGraph: {
     title: "Ashraful Islam Ashik | DevOps Engineer",
-    description: "DevOps Engineer portfolio built with Next.js and TypeScript.",
-    images: ["/og-image.png"],
+    description:
+      "Explore the portfolio of Ashraful Islam Ashik, a DevOps Engineer specializing in cloud infrastructure, automation, CI/CD, and scalable systems.",
+    url: siteUrl,
+    siteName: "Ashraful Islam Ashik Portfolio",
+    images: [
+      {
+        url: ogImage,
+        width: 1200,
+        height: 630,
+        alt: "Ashraful Islam Ashik Portfolio Preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ashraful Islam Ashik | DevOps Engineer",
+    description:
+      "Portfolio of Ashraful Islam Ashik — DevOps Engineer focused on cloud, containers, CI/CD, and monitoring.",
+    images: [ogImage],
+  },
+  alternates: {
+    canonical: siteUrl,
   },
 };
 
@@ -43,6 +86,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+
         <Toaster
           position="top-right"
           richColors
