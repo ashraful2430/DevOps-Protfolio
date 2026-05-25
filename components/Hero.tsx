@@ -73,6 +73,11 @@ export default function Hero() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -81,7 +86,7 @@ export default function Hero() {
     let mouse = { x: -9999, y: -9999 };
 
     const createParticles = (width: number, height: number) => {
-      const count = width < 640 ? 45 : 80;
+      const count = width < 640 ? 28 : 52;
       particles = Array.from({ length: count }, () => {
         const x = Math.random() * width;
         const y = Math.random() * height;

@@ -16,6 +16,7 @@ import {
   Database,
 } from "lucide-react";
 import { experience } from "@/lib/data";
+import Section3DAccent from "@/components/Section3DAccent";
 
 const floatingDots = Array.from({ length: 22 }, (_, i) => ({
   id: i,
@@ -53,6 +54,7 @@ export default function Experience() {
       className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <Section3DAccent align="left" label="OPS" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:40px_40px] opacity-[0.14] dark:opacity-[0.08]" />
 
         <motion.div
