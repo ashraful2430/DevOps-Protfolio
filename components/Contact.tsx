@@ -139,7 +139,9 @@ export default function Contact() {
       `Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`,
     );
 
-    window.location.href = `mailto:${RECEIVER_EMAIL}?subject=${subject}&body=${body}`;
+    window.location.assign(
+      `mailto:${RECEIVER_EMAIL}?subject=${subject}&body=${body}`,
+    );
   };
 
   const onSubmit = async (data: ContactFormData) => {

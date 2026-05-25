@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
 import {
@@ -46,15 +46,6 @@ export default function Hero() {
   const [mouseGlow, setMouseGlow] = useState({ x: 50, y: 50 });
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const rightPanelRef = useRef<HTMLDivElement | null>(null);
-
-  const initials = useMemo(() => {
-    return personalInfo.name
-      .split(" ")
-      .map((word) => word[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  }, []);
 
   useEffect(() => {
     const wordTimer = setInterval(() => {
@@ -294,8 +285,8 @@ export default function Hero() {
             </p>
 
             <blockquote className="mt-6 max-w-2xl border-l-4 border-accent pl-4 text-sm italic leading-8 text-slate-600 dark:text-slate-300 sm:text-base">
-              "Building scalable cloud systems, automating deployments, and
-              improving reliability through modern DevOps practices."
+              &quot;Building scalable cloud systems, automating deployments, and
+              improving reliability through modern DevOps practices.&quot;
             </blockquote>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
@@ -531,7 +522,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        <div className="mt-4flex justify-center lg:mt-4">
+        <div className="mt-4 flex justify-center lg:mt-4">
           <ScrollIndicator />
         </div>
       </div>

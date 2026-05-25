@@ -953,15 +953,17 @@ export function K8sAnimation() {
   );
 }
 
+const terraformResources = [
+  "aws_vpc.main",
+  "aws_subnet.public",
+  "aws_security_group.app",
+  "aws_db_instance.postgres",
+  "aws_lb.main",
+  "aws_eks_cluster.core",
+];
+
 export function TerraformAnimation() {
-  const resources = [
-    "aws_vpc.main",
-    "aws_subnet.public",
-    "aws_security_group.app",
-    "aws_db_instance.postgres",
-    "aws_lb.main",
-    "aws_eks_cluster.core",
-  ];
+  const resources = terraformResources;
   const [applied, setApplied] = useState(false);
   const [index, setIndex] = useState(-1);
 
@@ -990,7 +992,7 @@ export function TerraformAnimation() {
       .slice(0, Math.max(index + 1, 0))
       .flatMap((r) => [`${r}: Creating...`, `✓ ${r}: Creation complete`]);
     return [...base, ...items];
-  }, [index]);
+  }, [index, resources]);
 
   return (
     <PanelShell

@@ -8,10 +8,12 @@ import Education from "@/components/Education";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-background pt-20 text-foreground">
+      <ScrollToTop />
       <Navbar />
 
       <ScrollReveal>

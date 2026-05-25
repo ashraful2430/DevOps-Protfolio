@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { devopsSkills, mernSkills } from "@/lib/data";
 import SkillPanel from "@/components/skills/SkillPanel";
@@ -72,6 +72,7 @@ export default function Skills() {
   const [selectedCardKey, setSelectedCardKey] =
     useState<DisplaySkillKey>("aws");
   const [showAll, setShowAll] = useState(false);
+  const shouldScrollToSkill = useRef(false);
 
   const skills = useMemo(
     () => (activeTab === "devops" ? devopsSkills : mernSkills),
@@ -80,18 +81,9 @@ export default function Skills() {
 
   const visibleSkills = showAll ? skills : skills.slice(0, 10);
 
-  const firstInteractive = useMemo(() => {
-    const found = skills.find((s) => interactiveMap[s.key]);
-    return (found ? interactiveMap[found.key] : "cicd") || "cicd";
-  }, [skills]);
-
   useEffect(() => {
-    setShowAll(false);
-    setActiveSkill(firstInteractive);
-    setSelectedCardKey(skills[0]?.key || firstInteractive);
-  }, [activeTab, firstInteractive, skills]);
+    if (!shouldScrollToSkill.current) return;
 
-  useEffect(() => {
     const el = document.getElementById(`skill-card-${selectedCardKey}`);
     el?.scrollIntoView({
       behavior: "smooth",
@@ -100,7 +92,20 @@ export default function Skills() {
     });
   }, [selectedCardKey]);
 
+  const handleTabChange = (nextTab: TabKey) => {
+    const nextSkills = nextTab === "devops" ? devopsSkills : mernSkills;
+    const found = nextSkills.find((s) => interactiveMap[s.key]);
+    const nextInteractive = (found ? interactiveMap[found.key] : "cicd") || "cicd";
+
+    shouldScrollToSkill.current = true;
+    setActiveTab(nextTab);
+    setShowAll(false);
+    setActiveSkill(nextInteractive);
+    setSelectedCardKey(nextSkills[0]?.key || nextInteractive);
+  };
+
   const handleSkillClick = (skillKey: string) => {
+    shouldScrollToSkill.current = true;
     setSelectedCardKey(skillKey);
 
     const interactive = interactiveMap[skillKey];
@@ -199,7 +204,7 @@ export default function Skills() {
             return (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as TabKey)}
+                onClick={() => handleTabChange(tab.key as TabKey)}
                 className={`group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 ${
                   active
                     ? "bg-gradient-to-r from-accent via-emerald-500 to-cyan-500 text-white shadow-[0_14px_36px_rgba(16,185,129,0.28)]"

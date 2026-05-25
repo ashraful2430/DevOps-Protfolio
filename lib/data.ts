@@ -315,7 +315,50 @@ export const devopsSkills = [
   },
 ];
 
-export const projects = [
+type Project = {
+  id: number;
+  slug: string;
+  title: string;
+  subtitle: string;
+  category?: string;
+  image: string;
+  liveUrl: string;
+  clientUrl?: string;
+  serverUrl?: string;
+  description: string;
+  productFocus?: string[];
+  impact?: string;
+  features: string[];
+  technologies: string[];
+};
+
+export const projects: Project[] = [
+  {
+    id: 0,
+    slug: "daily-fitness-tracker",
+    title: "Daily Fitness Tracker",
+    subtitle: "Personal operating system for fitness, learning, money, and focus",
+    category: "Recent Project",
+    image: "/projects/daily-fitness-tracker.png",
+    liveUrl: "https://daily-fitness-tacker.netlify.app/",
+    clientUrl: "",
+    serverUrl: "",
+    description:
+      "A polished personal dashboard that brings daily routines, fitness goals, habit tracking, learning blocks, focus sessions, reports, and money awareness into one command center.",
+    productFocus: [
+      "Built for students, workers, and self-improvement focused users who need one place to manage health, productivity, and daily progress.",
+      "Designed around fast daily check-ins, persistent goal visibility, and contextual dashboard priorities so users can quickly understand what matters today.",
+    ],
+    impact:
+      "Positioned the app as more than a fitness log: it works as a daily command center for routines, goals, focus, and personal growth.",
+    features: [
+      "Unified dashboard for fitness metrics, habits, financial goals, learning routines, and focus blocks.",
+      "Context-aware profile flows that adapt priorities for students, professionals, and daily routine builders.",
+      "Persistent goal visibility so long-term goals stay connected to daily actions.",
+      "Modern responsive interface with a polished product feel across desktop and mobile devices.",
+    ],
+    technologies: ["Next.js", "React", "Tailwind CSS", "TypeScript", "Netlify"],
+  },
   {
     id: 1,
     slug: "chat-canvas",

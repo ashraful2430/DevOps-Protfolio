@@ -98,8 +98,8 @@ export default function Hero() {
           </p>
 
           <blockquote className="mt-6 max-w-2xl border-l-4 border-accent pl-4 text-sm italic leading-8 text-slate-300 sm:text-base">
-            "Building scalable cloud systems, automating deployments, and
-            improving reliability through modern DevOps practices."
+            &quot;Building scalable cloud systems, automating deployments, and
+            improving reliability through modern DevOps practices.&quot;
           </blockquote>
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
