@@ -125,10 +125,6 @@ export default function Hero() {
       mouse = { x: -9999, y: -9999 };
     };
 
-    const isDark =
-      document.documentElement.classList.contains("dark") ||
-      !document.documentElement.classList.contains("light");
-
     const draw = () => {
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -160,9 +156,7 @@ export default function Hero() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = isDark
-          ? "rgba(29, 158, 117, 0.72)"
-          : "rgba(29, 158, 117, 0.38)";
+        ctx.fillStyle = "rgba(29, 158, 117, 0.72)";
         ctx.fill();
 
         for (let j = i + 1; j < particles.length; j++) {
@@ -175,9 +169,9 @@ export default function Hero() {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(q.x, q.y);
-            ctx.strokeStyle = isDark
-              ? `rgba(34, 211, 238, ${0.12 * (1 - dist / 100)})`
-              : `rgba(34, 211, 238, ${0.07 * (1 - dist / 100)})`;
+            ctx.strokeStyle = `rgba(34, 211, 238, ${
+              0.12 * (1 - dist / 100)
+            })`;
             ctx.lineWidth = 1;
             ctx.stroke();
           }

@@ -13,19 +13,6 @@
   --accent: #1d9e75;
 }
 
-.light {
-  --background: #ffffff;
-  --foreground: #171717;
-  --card: #f8f8f8;
-  --card-foreground: #171717;
-  --muted: #f1f1f1;
-  --muted-foreground: #52525b;
-  --border: #e4e4e7;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --accent: #1d9e75;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -58,7 +45,7 @@ body {
 html {
   overflow-x: clip;
   overflow-y: scroll;
-  scrollbar-gutter: stable;
+  scrollbar-width: none;
 }
 
 body {
@@ -82,6 +69,20 @@ button,
 a {
   cursor: pointer;
 }
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
 @keyframes shine {
   0% {
     background-position: 200% 0;
