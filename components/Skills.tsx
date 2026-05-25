@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { devopsSkills, mernSkills } from "@/lib/data";
 import SkillPanel from "@/components/skills/SkillPanel";
+import Section3DAccent from "@/components/Section3DAccent";
 
 type TabKey = "devops" | "mern";
 
@@ -120,6 +121,7 @@ export default function Skills() {
       className="relative overflow-hidden py-16 sm:py-20 lg:py-24"
     >
       <div className="pointer-events-none absolute inset-0">
+        <Section3DAccent align="left" label="SKL" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:38px_38px] opacity-[0.18] dark:opacity-[0.1]" />
 
         <motion.div

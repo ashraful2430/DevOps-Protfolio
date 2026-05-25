@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { personalInfo } from "@/lib/data";
+import Section3DAccent from "@/components/Section3DAccent";
 
 const footerLinks = [
   { label: "Home", href: "#home" },
@@ -109,6 +110,7 @@ export default function Footer() {
     <footer className="relative overflow-hidden border-t border-border/60 py-14">
       <AnimatedGrid />
       <FloatingParticles />
+      <Section3DAccent align="right" label="END" />
 
       {/* Glow blobs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -130,9 +132,13 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="relative rounded-[32px] border border-border bg-card/70 p-6 backdrop-blur-2xl sm:p-10"
+          className="relative rounded-[32px] border border-border bg-card/70 p-6 shadow-[0_28px_100px_rgba(0,0,0,0.28)] backdrop-blur-2xl [transform-style:preserve-3d] sm:p-10"
         >
-          <div className="grid gap-10 lg:grid-cols-2">
+          <div className="pointer-events-none absolute inset-0 rounded-[32px] bg-[linear-gradient(135deg,rgba(29,158,117,0.1),transparent_34%),linear-gradient(315deg,rgba(34,211,238,0.09),transparent_28%)]" />
+          <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full border border-accent/15 [animation:orbit-3d_20s_linear_infinite]" />
+          <div className="pointer-events-none absolute -bottom-16 left-1/4 h-44 w-44 rounded-full border border-cyan-400/15 [animation:orbit-3d_26s_linear_infinite_reverse]" />
+
+          <div className="relative grid gap-10 lg:grid-cols-2">
             {/* LEFT */}
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-4 py-2 text-sm text-muted-foreground">
@@ -207,7 +213,7 @@ export default function Footer() {
           </div>
 
           {/* BOTTOM */}
-          <div className="mt-10 border-t border-border pt-6 flex flex-col sm:flex-row justify-between text-sm text-muted-foreground">
+          <div className="relative mt-10 flex flex-col justify-between border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row">
             <p>
               © {new Date().getFullYear()} {personalInfo.name}
             </p>

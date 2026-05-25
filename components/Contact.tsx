@@ -21,6 +21,7 @@ import {
   Sparkles,
   ArrowUpRight,
 } from "lucide-react";
+import Section3DAccent from "@/components/Section3DAccent";
 
 type ContactFormData = {
   name: string;
@@ -195,6 +196,7 @@ export default function Contact() {
     >
       <AnimatedGrid />
       <FloatingParticles />
+      <Section3DAccent align="left" label="MSG" />
 
       <div className="pointer-events-none absolute inset-0 -z-10">
         <motion.div
@@ -255,10 +257,12 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true, amount: 0.2 }}
-            className="relative overflow-hidden rounded-[30px] border border-border bg-card/70 p-6 shadow-[0_10px_60px_rgba(0,0,0,0.15)] backdrop-blur-2xl sm:p-8"
+            className="relative overflow-hidden rounded-[30px] border border-border bg-card/70 p-6 shadow-[0_26px_90px_rgba(0,0,0,0.28)] backdrop-blur-2xl sm:p-8"
             style={{ transformStyle: "preserve-3d" }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent dark:from-white/[0.05]" />
+            <div className="absolute -right-8 top-1/2 h-32 w-32 rounded-full border border-accent/15 [animation:orbit-3d_22s_linear_infinite]" />
+            <div className="absolute -left-10 bottom-8 h-28 w-28 rounded-full border border-cyan-400/15 [animation:orbit-3d_18s_linear_infinite_reverse]" />
             <motion.div
               className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-emerald-400/15 blur-3xl"
               animate={{ scale: [1, 1.15, 1], rotate: [0, 25, 0] }}
@@ -361,7 +365,7 @@ export default function Contact() {
             className="relative"
             onMouseMove={handleMouseMove}
           >
-            <div className="relative overflow-hidden rounded-[30px] border border-border bg-card/70 p-6 shadow-[0_10px_60px_rgba(0,0,0,0.15)] backdrop-blur-2xl sm:p-8">
+            <div className="relative overflow-hidden rounded-[30px] border border-border bg-card/70 p-6 shadow-[0_26px_90px_rgba(0,0,0,0.28)] backdrop-blur-2xl sm:p-8">
               <motion.div
                 className="pointer-events-none absolute h-44 w-44 rounded-full bg-emerald-400/15 blur-3xl"
                 style={{
@@ -373,6 +377,7 @@ export default function Contact() {
               />
 
               <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent dark:from-white/[0.05]" />
+              <div className="absolute -right-8 bottom-12 h-32 w-32 rounded-full border border-accent/15 [animation:orbit-3d_20s_linear_infinite]" />
 
               <motion.div
                 className="absolute -right-20 top-10 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl"

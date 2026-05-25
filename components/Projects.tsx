@@ -316,10 +316,6 @@ export default function Projects() {
                 Supporting full-stack work
               </h3>
             </div>
-            <p className="max-w-xl text-sm leading-7 text-muted-foreground">
-              These projects are kept compact so the recent case study stays the
-              main story while still showing breadth.
-            </p>
           </div>
 
           <div className="grid items-stretch gap-6 lg:grid-cols-3">

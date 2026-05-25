@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   BookOpen,
 } from "lucide-react";
+import Section3DAccent from "@/components/Section3DAccent";
 
 const educationItems = [
   {
@@ -123,6 +124,7 @@ export default function Education() {
     >
       <AnimatedGrid />
       <FloatingParticles />
+      <Section3DAccent align="right" label="EDU" />
 
       <div className="pointer-events-none absolute inset-0 -z-10">
         <motion.div
@@ -201,9 +203,10 @@ export default function Education() {
                 viewport={{ once: true, amount: 0.2 }}
                 whileHover={{ y: -8, scale: 1.01 }}
                 style={{ transformStyle: "preserve-3d" }}
-                className="group relative overflow-hidden rounded-[30px] border border-border bg-card/70 p-6 shadow-[0_10px_60px_rgba(0,0,0,0.15)] backdrop-blur-2xl sm:p-8"
+                className="group relative overflow-hidden rounded-[30px] border border-border bg-card/70 p-6 shadow-[0_26px_90px_rgba(0,0,0,0.26)] backdrop-blur-2xl sm:p-8"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] via-transparent to-transparent dark:from-white/[0.05]" />
+                <div className="absolute -right-10 top-1/2 h-32 w-32 rounded-full border border-accent/15 [animation:orbit-3d_24s_linear_infinite]" />
 
                 <motion.div
                   className={`absolute -right-16 -top-16 h-40 w-40 rounded-full ${item.glow} blur-3xl`}
